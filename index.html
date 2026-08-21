@@ -2521,4 +2521,31 @@
       ok = document.execCommand("copy");
       document.body.removeChild(ta);
     } catch (e) { ok = false; }
-    retur
+    return ok;
+  }
+
+  function copyReceipt() {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(currentReceiptText).then(function () {
+        showToast("Recibo copiado ✓");
+      }).catch(function () {
+        showToast(legacyCopy(currentReceiptText) ? "Recibo copiado ✓" : "No se pudo copiar");
+      });
+    } else {
+      showToast(legacyCopy(currentReceiptText) ? "Recibo copiado ✓" : "No se pudo copiar");
+    }
+  }
+
+  document.getElementById("closeReceiptBtn").addEventListener("click", closeReceipt);
+  document.getElementById("copyReceiptBtn").addEventListener("click", copyReceipt);
+  document.getElementById("printReceiptBtn").addEventListener("click", function () {
+    if (window.AndroidPrint && window.AndroidPrint.print) { window.AndroidPrint.print(); }
+    else { window.print(); }
+  });
+  receiptOverlay.addEventListener("click", function (e) { if (e.target === receiptOverlay) closeReceipt(); });
+
+  /* ---------- Init ---------- */
+  renderCatalogo();
+  refreshSummary();
+})();
+</script>
