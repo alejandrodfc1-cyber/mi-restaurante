@@ -200,12 +200,12 @@
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 999px;
-    padding: 0.5rem 1rem;
+    padding: 0.65rem 1.2rem;
     box-shadow: 0 1px 2px var(--shadow);
     white-space: nowrap;
   }
-  .summary-pill .n { font-size: 0.75rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
-  .summary-pill .v { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .summary-pill .n { font-size: 0.85rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+  .summary-pill .v { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; color: var(--accent); font-variant-numeric: tabular-nums; }
 
   /* ---------- Tabs ---------- */
   .tabs {
@@ -225,8 +225,8 @@
     background: transparent;
     color: var(--ink-soft);
     font-weight: 600;
-    font-size: 0.95rem;
-    padding: 0.5rem 1.15rem;
+    font-size: 1.05rem;
+    padding: 0.55rem 1.25rem;
     border-radius: 999px;
     display: flex;
     align-items: center;
@@ -335,8 +335,8 @@
   .icon-btn:hover { background: var(--accent); color: var(--accent-ink); }
 
   .card-body { padding: 0.8rem 0.9rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; flex: 1; }
-  .card-name { font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; line-height: 1.25; }
-  .card-price { font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 700; font-size: 0.95rem; }
+  .card-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; line-height: 1.25; }
+  .card-price { font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 700; font-size: 1.05rem; }
 
   .add-btn {
     margin-top: auto;
@@ -662,32 +662,32 @@
   }
   .mesa-back-btn:hover { border-color: var(--accent); color: var(--accent); }
   .mesa-current-pill { display: flex; flex-direction: column; gap: 0.05rem; flex: none; }
-  .mesa-current-eyebrow { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); }
-  .mesa-current-name { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; color: var(--accent); line-height: 1.1; }
+  .mesa-current-eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); }
+  .mesa-current-name { font-family: var(--font-display); font-weight: 800; font-size: 1.55rem; color: var(--accent); line-height: 1.1; }
   .mesa-ticket-btn {
     flex: none;
     margin-left: auto;
     border: 1px solid var(--line);
     background: var(--surface);
     border-radius: 999px;
-    padding: 0.45rem 0.95rem;
+    padding: 0.6rem 1.15rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--gold);
-    font-size: 0.9rem;
+    font-size: 1.05rem;
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.45rem;
     box-shadow: 0 1px 2px var(--shadow);
   }
   .mesa-ticket-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .mesa-ticket-btn .ticket-icon { font-size: 1.05rem; }
+  .mesa-ticket-btn .ticket-icon { font-size: 1.25rem; }
   .mesa-grid-title { margin-top: 1.4rem; }
 
   .mesa-card.mesa-occupied { border-color: var(--gold); }
   .mesa-card:not(.mesa-occupied) .card-price { color: var(--ink-soft); font-weight: 600; }
-  .mesa-photo-free { background: var(--mesa-free-soft); color: var(--mesa-free); }
-  .mesa-photo-occupied { background: var(--mesa-occupied-soft); color: var(--gold); }
+  .mesa-photo-free { background: var(--mesa-free-soft); color: var(--mesa-free); font-size: 3.4rem; }
+  .mesa-photo-occupied { background: var(--mesa-occupied-soft); color: var(--gold); font-size: 3.4rem; }
 
   .mesa-add-card {
     border: 2px dashed var(--line);
@@ -871,28 +871,26 @@
   @media (max-width: 480px) {
     .app { padding: 0 0.6rem 3rem; }
 
-    .tab-btn { padding: 0.45rem 0.8rem; font-size: 0.85rem; gap: 0.3rem; }
+    .tab-btn { padding: 0.5rem 0.9rem; font-size: 1rem; gap: 0.3rem; }
     .stat-card { min-width: 0; padding: 0.8rem 0.9rem; }
     .stat-card .stat-value { font-size: 1.35rem; }
 
-    .grid { gap: 0.4rem; }
+    .grid { gap: 0.5rem; }
 
-    .card { border-radius: 10px; cursor: pointer; }
-    .card-photo { aspect-ratio: 1 / 1; font-size: 1.3rem; }
-    .card-tools { top: 0.2rem; left: 0.2rem; }
-    .icon-btn { width: 1.05rem; height: 1.05rem; font-size: 0.52rem; }
-    .qty-badge { top: 0.2rem; right: 0.2rem; min-width: 0.95rem; height: 0.95rem; font-size: 0.52rem; padding: 0 0.15rem; }
-    .stock-flag { font-size: 0.6rem; gap: 0.1rem; }
-    .stock-flag .warn-icon { font-size: 1rem; }
+    .card { border-radius: 12px; cursor: pointer; }
+    .card-photo { aspect-ratio: 1 / 1; font-size: 1.7rem; }
+    .mesa-photo-free, .mesa-photo-occupied { font-size: 2.6rem; }
+    .card-tools { top: 0.3rem; left: 0.3rem; }
+    .icon-btn { width: 1.4rem; height: 1.4rem; font-size: 0.7rem; }
+    .stock-flag { font-size: 0.68rem; gap: 0.1rem; }
+    .stock-flag .warn-icon { font-size: 1.2rem; }
 
-    .card-body { padding: 0.28rem 0.32rem 0.32rem; gap: 0.15rem; }
+    .card-body { padding: 0.5rem 0.55rem 0.6rem; gap: 0.25rem; }
     .card-name {
-      font-size: 0.64rem; line-height: 1.2; font-weight: 600;
+      font-size: 0.9rem; line-height: 1.25; font-weight: 700;
       white-space: normal; word-break: break-word;
     }
-    .card-price { font-size: 0.58rem; }
-
-    .add-btn { display: none; }
+    .card-price { font-size: 0.8rem; }
 
     /* Pedido compacto */
     .app { padding-bottom: 0.75rem; }
@@ -901,32 +899,32 @@
     .tabs { margin: 0.6rem 0 0.7rem; }
 
     .order-list { gap: 0.5rem; }
-    .order-row { padding: 0.5rem 0.55rem; gap: 0.45rem; border-radius: 12px; }
-    .order-thumb { width: 42px; height: 42px; border-radius: 10px; font-size: 1.15rem; }
+    .order-row { padding: 0.6rem 0.65rem; gap: 0.5rem; border-radius: 12px; }
+    .order-thumb { width: 50px; height: 50px; border-radius: 11px; font-size: 1.3rem; }
     .order-info { overflow: hidden; }
     .order-info .name {
-      font-size: 0.86rem; line-height: 1.2;
+      font-size: 1rem; line-height: 1.25;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .order-info .unit { font-size: 0.72rem; }
-    .stepper { gap: 0.3rem; }
-    .stepper button { width: 30px; height: 30px; font-size: 0.95rem; }
-    .stepper .qty { min-width: 1.1rem; font-size: 0.86rem; }
-    .order-subtotal { min-width: 54px; font-size: 0.84rem; }
-    .remove-btn { width: 26px; height: 26px; font-size: 1rem; }
+    .order-info .unit { font-size: 0.82rem; }
+    .stepper { gap: 0.35rem; }
+    .stepper button { width: 34px; height: 34px; font-size: 1.05rem; }
+    .stepper .qty { min-width: 1.2rem; font-size: 0.95rem; }
+    .order-subtotal { min-width: 60px; font-size: 0.95rem; }
+    .remove-btn { width: 30px; height: 30px; font-size: 1.1rem; }
 
-    .order-footer { padding: 0.6rem 0.75rem; margin-top: 0.6rem; gap: 0.5rem; }
-    .total-block .label { font-size: 0.66rem; }
-    .total-block .amount { font-size: 1.3rem; }
-    .tip-hint { font-size: 0.68rem; }
-    .tip-total { font-size: 0.76rem; }
+    .order-footer { padding: 0.7rem 0.85rem; margin-top: 0.6rem; gap: 0.5rem; }
+    .total-block .label { font-size: 0.72rem; }
+    .total-block .amount { font-size: 1.5rem; }
+    .tip-hint { font-size: 0.74rem; }
+    .tip-total { font-size: 0.85rem; }
     .footer-actions { gap: 0.4rem; }
-    .clear-btn, .confirm-btn { padding: 0.5rem 0.75rem; font-size: 0.82rem; }
+    .clear-btn, .confirm-btn { padding: 0.6rem 0.85rem; font-size: 0.92rem; }
 
     .mesa-bar { gap: 0.5rem; padding: 0.5rem 0 0.7rem; }
-    .mesa-current-name { font-size: 1.05rem; }
-    .mesa-back-btn { width: 1.8rem; height: 1.8rem; font-size: 0.95rem; }
-    .mesa-ticket-btn { padding: 0.35rem 0.7rem; font-size: 0.78rem; }
+    .mesa-current-name { font-size: 1.35rem; }
+    .mesa-back-btn { width: 2rem; height: 2rem; font-size: 1.05rem; }
+    .mesa-ticket-btn { padding: 0.45rem 0.85rem; font-size: 0.95rem; }
   }
 </style>
 <div class="app">
@@ -1728,18 +1726,11 @@
         '<div class="card-body">' +
           '<div class="card-name">' + esc(p.name) + '</div>' +
           '<div class="card-price">' + money(p.price) + '</div>' +
-          (outOfStock
-            ? '<button class="add-btn add-btn-disabled" disabled>⚠️ Agotado</button>'
-            : '<button class="add-btn">+ Agregar</button>') +
         '</div>' +
       '</div>'
     );
     if (!outOfStock) {
       card.addEventListener("click", function () { onAdd(p.id); });
-      card.querySelector(".add-btn").addEventListener("click", function (e) {
-        e.stopPropagation();
-        onAdd(p.id);
-      });
     } else {
       card.addEventListener("click", function () { outOfStockToast(p); });
     }
@@ -1942,7 +1933,6 @@
         '<div class="card-body">' +
           '<div class="card-name">' + (mesa.name ? esc(mesa.name) : "Mesa " + mesa.number) + '</div>' +
           '<div class="card-price">' + (occupied ? money(mesaTotal(mesa)) : "Libre") + '</div>' +
-          '<button class="add-btn">' + (occupied ? "Ver pedido" : "Tomar pedido") + '</button>' +
         '</div>' +
       '</div>'
     );
@@ -1951,10 +1941,6 @@
       openMesaNameModal(mesa.id);
     });
     card.addEventListener("click", function () { enterMesa(mesa.id); });
-    card.querySelector(".add-btn").addEventListener("click", function (e) {
-      e.stopPropagation();
-      enterMesa(mesa.id);
-    });
     return card;
   }
 
