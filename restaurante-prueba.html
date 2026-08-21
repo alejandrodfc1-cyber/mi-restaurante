@@ -1,0 +1,2546 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carta Digital — Mi Restaurante</title>
+<style>
+  @font-face {
+    font-family: 'Syne';
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: local('Syne');
+  }
+  :root {
+    --bg: #FBF6EF;
+    --surface: #FFFFFF;
+    --surface-2: #F3E9DA;
+    --ink: #2E2620;
+    --ink-soft: #8C7F6E;
+    --accent: #B5482F;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #F3D8CD;
+    --gold: #A9761D;
+    --line: #EBDFCC;
+    --danger: #A6373B;
+    --warn: #C23B3B;
+    --warn-soft: #F7DEDA;
+    --shadow: rgba(46, 38, 32, 0.12);
+
+    --ph1a:#F3D8CD; --ph1b:#E7B49E;
+
+    --mesa-free: #4F7A52;
+    --mesa-free-soft: #DCEBDB;
+    --mesa-occupied-soft: #F3E4C2;
+
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+
+    --font-display: 'Syne', Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1E1712;
+      --surface: #2B211A;
+      --surface-2: #352922;
+      --ink: #F5E9DC;
+      --ink-soft: #C2AC98;
+      --accent: #E37350;
+      --accent-ink: #241109;
+      --accent-soft: #4A2E22;
+      --gold: #D9A94A;
+      --line: #4A3A2E;
+      --danger: #E5849F;
+      --warn: #FF6B5C;
+      --warn-soft: #4A2420;
+      --shadow: rgba(0, 0, 0, 0.45);
+
+      --ph1a:#4A2E22; --ph1b:#5E3B2B;
+
+      --mesa-free: #7FB37E;
+      --mesa-free-soft: #24352A;
+      --mesa-occupied-soft: #4A3A1E;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1E1712;
+    --surface: #2B211A;
+    --surface-2: #352922;
+    --ink: #F5E9DC;
+    --ink-soft: #C2AC98;
+    --accent: #E37350;
+    --accent-ink: #241109;
+    --accent-soft: #4A2E22;
+    --gold: #D9A94A;
+    --line: #4A3A2E;
+    --danger: #E5849F;
+    --warn: #FF6B5C;
+    --warn-soft: #4A2420;
+    --shadow: rgba(0, 0, 0, 0.45);
+
+    --ph1a:#4A2E22; --ph1b:#5E3B2B;
+
+    --mesa-free: #7FB37E;
+    --mesa-free-soft: #24352A;
+    --mesa-occupied-soft: #4A3A1E;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    background-image: radial-gradient(var(--line) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button, input { font-family: inherit; color: inherit; }
+  button:focus-visible, input:focus-visible, [contenteditable]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  button { cursor: pointer; }
+
+  .app {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 1.25rem 4rem;
+  }
+
+  /* ---------- Header ---------- */
+  .app-top {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg);
+  }
+
+  header.app-header {
+    padding: 1.1rem 0 0.85rem;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .brand { display: flex; align-items: center; gap: 0.7rem; min-width: 0; }
+
+  .brand-mark {
+    flex: none;
+    height: 56px;
+    width: 56px;
+    border-radius: 16px;
+    background: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+  }
+  .brand-mark svg { width: 30px; height: 30px; }
+
+  .brand-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+
+  .brand-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    border-radius: 6px;
+    padding: 0.05rem 0.25rem;
+    margin-left: -0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .brand-tag {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .brand-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+    margin-top: 0.15rem;
+  }
+  .meta-field {
+    border-radius: 4px;
+    padding: 0 0.2rem;
+    cursor: text;
+  }
+  .meta-field:hover, .meta-field:focus { background: var(--surface-2); }
+  .meta-field:empty:before { content: attr(data-placeholder); opacity: 0.65; font-style: italic; }
+  .meta-sep { opacity: 0.5; }
+
+  .brand-whatsapp { display: flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; color: var(--ink-soft); margin-top: 0.15rem; }
+  .brand-whatsapp .wa-label { opacity: 0.8; }
+
+  /* ---------- Modo cliente ---------- */
+  .customer-mode #tabVentasBtn,
+  .customer-mode #tabInventarioBtn,
+  .customer-mode #tabMesasBtn,
+  .customer-mode #whatsappRow,
+  .customer-mode .card-tools {
+    display: none !important;
+  }
+
+  .summary-pill {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.65rem 1.2rem;
+    box-shadow: 0 1px 2px var(--shadow);
+    white-space: nowrap;
+  }
+  .summary-pill .n { font-size: 0.85rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+  .summary-pill .v { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Tabs ---------- */
+  .tabs {
+    display: flex;
+    gap: 0.4rem;
+    margin: 1.1rem 0 1.4rem;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.3rem;
+    width: fit-content;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 0.55rem 1.25rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: background .15s ease, color .15s ease;
+  }
+  .tab-btn.active { background: var(--accent); color: var(--accent-ink); }
+  .tab-btn .badge {
+    background: rgba(0,0,0,0.15);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    padding: 0.05rem 0.42rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .tab-btn:not(.active) .badge { background: var(--accent-soft); color: var(--accent); }
+
+  /* ---------- Menú grid ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.9rem;
+  }
+
+  #mesaTableGrid { grid-template-columns: repeat(4, 1fr); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 1px 2px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    cursor: pointer;
+  }
+  .card:active { transform: scale(0.97); }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .card-photo {
+    aspect-ratio: 1 / 0.85;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.6rem;
+    color: var(--ink-soft);
+    overflow: hidden;
+  }
+  .card-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .ph1 { background: linear-gradient(135deg, var(--ph1a), var(--ph1b)); }
+
+  .qty-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-radius: 999px;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 0 0.35rem;
+    box-shadow: 0 2px 6px var(--shadow);
+  }
+
+  /* Product cards only (not the Mesas grid): make the accumulated-quantity
+     badge bigger and easier to spot at a glance. */
+  .card:not(.mesa-card) .qty-badge {
+    min-width: 2.1rem;
+    height: 2.1rem;
+    font-size: 1.15rem;
+    padding: 0 0.5rem;
+    top: 0.4rem;
+    right: 0.4rem;
+  }
+
+  .card-tools {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    display: flex;
+    gap: 0.3rem;
+  }
+  .icon-btn {
+    border: none;
+    background: rgba(255,255,255,0.85);
+    color: var(--ink);
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  :root:not([data-theme="light"]) .icon-btn, :root[data-theme="dark"] .icon-btn {
+    background: rgba(0,0,0,0.5);
+  }
+  .icon-btn:hover { background: var(--accent); color: var(--accent-ink); }
+
+  .card-body { padding: 0.8rem 0.9rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; flex: 1; }
+  .card-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; line-height: 1.25; }
+  .card-price { font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 700; font-size: 1.05rem; }
+
+  .add-btn {
+    margin-top: auto;
+    border: none;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 0.55rem;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    transition: filter .15s ease, transform .1s ease;
+  }
+  .add-btn:hover { filter: brightness(1.08); }
+  .add-btn:active { transform: scale(0.97); }
+  .add-btn-disabled, .add-btn-disabled:hover {
+    background: var(--warn-soft);
+    color: var(--warn);
+    filter: none;
+    cursor: not-allowed;
+    font-weight: 800;
+  }
+
+  .card.out-of-stock { cursor: not-allowed; }
+  .card.out-of-stock:hover { transform: none; box-shadow: 0 1px 2px var(--shadow); }
+  .card.out-of-stock .card-photo { filter: grayscale(0.6); opacity: 0.55; }
+  .card.out-of-stock .card-name, .card.out-of-stock .card-price { opacity: 0.55; }
+
+  .stock-flag {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    background: rgba(20, 12, 9, 0.55);
+    color: var(--warn);
+    font-weight: 800;
+    font-size: 0.92rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    padding: 0.3rem;
+  }
+  .stock-flag .warn-icon { font-size: 1.5rem; line-height: 1; text-shadow: none; }
+
+  /* ---------- Pedido view ---------- */
+  .order-list { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .order-row {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 0.6rem 0.8rem;
+    animation: rise .3s ease both;
+  }
+
+  .order-thumb {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--ink-soft);
+  }
+  .order-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  .order-info { flex: 1; min-width: 0; }
+  .order-info .name { font-weight: 700; font-family: var(--font-display); font-size: 1rem; }
+  .order-info .unit { font-size: 0.8rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+  .stepper { display: flex; align-items: center; gap: 0.4rem; flex: none; }
+  .stepper button {
+    width: 28px; height: 28px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .stepper button:hover { border-color: var(--accent); color: var(--accent); }
+  .stepper .qty { min-width: 1.4rem; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .order-subtotal {
+    min-width: 84px;
+    text-align: right;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    flex: none;
+  }
+
+  .remove-btn {
+    flex: none;
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 1.1rem;
+    width: 28px; height: 28px;
+    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .remove-btn:hover { color: var(--danger); background: var(--accent-soft); }
+
+  .order-footer {
+    position: sticky;
+    bottom: 0;
+    margin-top: 1.2rem;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    box-shadow: 0 -4px 16px var(--shadow);
+  }
+  .customer-name-input {
+    flex-basis: 100%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 0.55rem 0.7rem;
+    font-size: 0.88rem;
+    color: var(--ink);
+  }
+  .customer-name-input:focus { border-color: var(--accent); outline: none; }
+  .total-block .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); }
+  .total-block .amount { font-family: var(--font-body); font-size: 1.9rem; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .tip-hint { font-size: 0.75rem; color: var(--ink-soft); margin-top: 0.2rem; font-variant-numeric: tabular-nums; }
+  .tip-total { font-size: 0.85rem; font-weight: 700; color: var(--ink); margin-top: 0.15rem; font-variant-numeric: tabular-nums; }
+
+  .footer-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+  .clear-btn {
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    font-weight: 600;
+    padding: 0.6rem 1.1rem;
+    border-radius: var(--radius-sm);
+  }
+  .clear-btn:hover { border-color: var(--danger); color: var(--danger); }
+  .clear-btn.confirming, .btn-danger.confirming {
+    border-color: var(--danger);
+    background: var(--danger);
+    color: #fff;
+  }
+
+  .confirm-btn {
+    border: none;
+    background: var(--gold);
+    color: var(--accent-ink);
+    font-weight: 700;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-sm);
+    transition: filter .15s ease;
+  }
+  .confirm-btn:hover { filter: brightness(1.08); }
+
+  .empty-state {
+    text-align: center;
+    padding: 3.5rem 1rem;
+    color: var(--ink-soft);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .empty-state .glyph { font-size: 2.6rem; }
+  .empty-state .go-btn {
+    border: none;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-sm);
+  }
+
+  /* ---------- Ventas ---------- */
+  .sales-stats { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+  .stat-card {
+    flex: 1;
+    min-width: 150px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.15rem;
+    box-shadow: 0 1px 2px var(--shadow);
+  }
+  .stat-card .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); }
+  .stat-card .stat-value { font-family: var(--font-body); font-size: 1.65rem; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; margin-top: 0.15rem; }
+  .stat-card .stat-sub { font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.15rem; }
+
+  .sales-section-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin: 0 0 0.7rem; }
+
+  .sale-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+    animation: rise .3s ease both;
+    transition: border-color .15s ease;
+  }
+  .sale-row:hover { border-color: var(--accent); }
+  .sale-time { flex: none; width: 3.6rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink-soft); font-size: 0.82rem; }
+  .sale-info { flex: 1; min-width: 0; }
+  .sale-info .items { font-weight: 600; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sale-info .num { font-size: 0.76rem; color: var(--ink-soft); margin-top: 0.1rem; }
+  .sale-total { flex: none; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .day-group { margin-bottom: 0.6rem; }
+  .day-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 0.65rem 0.9rem;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .15s ease;
+  }
+  .day-header:hover { border-color: var(--accent); }
+  .day-header .day-label { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; flex: 1; min-width: 0; }
+  .day-header .day-count { font-size: 0.78rem; color: var(--ink-soft); flex: none; }
+  .day-header .day-total { font-weight: 700; font-variant-numeric: tabular-nums; flex: none; }
+  .day-header .day-chevron { flex: none; color: var(--ink-soft); transition: transform .15s ease; font-size: 0.8rem; }
+  .day-group.open .day-header .day-chevron { transform: rotate(180deg); }
+  .day-sales { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.5rem; padding-left: 0.2rem; }
+
+  /* ---------- Platos (admin) ---------- */
+  .inv-list { display: flex; flex-direction: column; gap: 0.6rem; }
+  .inv-row {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+    animation: rise .3s ease both;
+    transition: border-color .15s ease;
+  }
+  .inv-row:hover { border-color: var(--accent); }
+  .inv-thumb {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    color: var(--ink-soft);
+  }
+  .inv-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .inv-info { flex: 1; min-width: 0; }
+  .inv-info .name { font-weight: 700; font-family: var(--font-display); font-size: 0.98rem; }
+  .inv-info .prices { display: flex; gap: 0.6rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; margin-top: 0.1rem; }
+  .inv-info .prices .venta { color: var(--gold); font-weight: 700; }
+  .inv-info .prices .margin { color: var(--accent); }
+  .inv-stock { display: flex; align-items: center; gap: 0.4rem; flex: none; }
+  .inv-stock .stock-label { font-size: 0.68rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; text-align: center; }
+
+  .add-inv-btn {
+    border: 2px dashed var(--line);
+    border-radius: var(--radius-lg);
+    background: transparent;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.9rem;
+    font-weight: 600;
+    width: 100%;
+    margin-bottom: 1rem;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  .add-inv-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .add-inv-btn .plus { font-size: 1.3rem; line-height: 1; }
+
+  /* ---------- Mesas ---------- */
+  .mesa-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    padding: 0.6rem 0 0.9rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .mesa-back-btn {
+    flex: none;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  .mesa-back-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .mesa-current-pill { display: flex; flex-direction: column; gap: 0.05rem; flex: none; }
+  .mesa-current-eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); }
+  .mesa-current-name { font-family: var(--font-display); font-weight: 800; font-size: 1.55rem; color: var(--accent); line-height: 1.1; }
+  .mesa-ticket-btn {
+    flex: none;
+    margin-left: auto;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 999px;
+    padding: 0.6rem 1.15rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--gold);
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    box-shadow: 0 1px 2px var(--shadow);
+  }
+  .mesa-ticket-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .mesa-ticket-btn .ticket-icon { font-size: 1.25rem; }
+  .mesa-grid-title { margin-top: 1.4rem; }
+
+  .mesa-card.mesa-occupied { border-color: var(--gold); }
+  .mesa-card:not(.mesa-occupied) .card-price { color: var(--ink-soft); font-weight: 600; }
+  .mesa-photo-free { background: var(--mesa-free-soft); color: var(--mesa-free); font-size: 3.4rem; }
+  .mesa-photo-occupied { background: var(--mesa-occupied-soft); color: var(--gold); font-size: 3.4rem; }
+
+  .mesa-add-card {
+    border: 2px dashed var(--line);
+    background: transparent;
+    box-shadow: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .mesa-add-card:hover { border-color: var(--accent); }
+  .mesa-add-card .card-photo { background: none; }
+  .mesa-add-card .plus { font-size: 2rem; color: var(--ink-soft); line-height: 1; }
+  .mesa-add-card:hover .plus { color: var(--accent); }
+  .mesa-add-card .card-body { align-items: center; text-align: center; }
+  .mesa-add-card .card-name { color: var(--ink-soft); font-weight: 600; }
+  .mesa-add-card:hover .card-name { color: var(--accent); }
+
+
+  .mesa-order-section { margin-bottom: 1.8rem; }
+  .mesa-order-section:last-child { margin-bottom: 0; }
+  .mesa-order-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .mesa-order-heading-name { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+  .mesa-order-heading-total { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--gold); font-size: 0.95rem; }
+
+  /* ---------- Modal ---------- */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(20, 12, 9, 0.45);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+    z-index: 50;
+  }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    width: min(420px, 100%);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal h2 { margin: 0; font-family: var(--font-display); font-size: 1.3rem; }
+
+  .field-row { display: flex; gap: 0.7rem; }
+  .field-row .field { flex: 1; min-width: 0; }
+
+  .field { display: flex; flex-direction: column; gap: 0.35rem; }
+  .field label { font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
+  .field input[type="text"], .field input[type="number"] {
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.7rem;
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+  .field input:focus { border-color: var(--accent); }
+
+  .photo-field {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem;
+    border: 1.5px dashed var(--line);
+    border-radius: var(--radius-md);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .photo-field.drag-over { border-color: var(--accent); background: var(--accent-soft); }
+  .photo-preview {
+    width: 76px; height: 76px;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    color: var(--ink-soft);
+    flex: none;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+  .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+  .file-btn {
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    padding: 0.5rem 0.8rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .file-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .photo-hint { font-size: 0.75rem; color: var(--ink-soft); line-height: 1.3; }
+
+  .modal-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.3rem; }
+  .btn-secondary { border: 1px solid var(--line); background: transparent; padding: 0.6rem 1.1rem; border-radius: var(--radius-sm); font-weight: 600; color: var(--ink-soft); }
+  .btn-primary { border: none; background: var(--accent); color: var(--accent-ink); padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); font-weight: 700; }
+  .wa-link { display: block; text-align: center; text-decoration: none; }
+  .wa-hint { color: var(--ink-soft); font-size: 0.9rem; margin: 0; }
+  .btn-danger { border: none; background: transparent; color: var(--danger); font-weight: 600; padding: 0.6rem 0.4rem; margin-right: auto; }
+
+  /* ---------- Recibo ---------- */
+  .receipt-modal { width: min(360px, 100%); }
+  .receipt-head { text-align: center; display: flex; flex-direction: column; gap: 0.15rem; }
+  .receipt-biz { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; text-wrap: balance; }
+  .receipt-meta { font-size: 0.8rem; color: var(--ink-soft); }
+  .receipt-line { display: flex; justify-content: space-between; gap: 0.6rem; font-size: 0.85rem; }
+  .receipt-sub { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .receipt-items {
+    display: flex; flex-direction: column; gap: 0.55rem;
+    padding: 0.85rem 0;
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+  }
+  .receipt-item-main { display: flex; justify-content: space-between; gap: 0.6rem; font-weight: 600; }
+  .ri-sub { font-variant-numeric: tabular-nums; }
+  .ri-detail { font-size: 0.78rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .receipt-total { font-family: var(--font-body); font-size: 1.35rem; font-weight: 700; color: var(--gold); }
+  .receipt-tip-total { font-weight: 700; color: var(--ink); }
+  .receipt-thanks { text-align: center; font-style: italic; color: var(--ink-soft); font-size: 0.85rem; margin-top: 0.2rem; }
+  .print-hint { text-align: center; font-size: 0.72rem; color: var(--ink-soft); margin: 0; }
+
+  @media print {
+    body * { visibility: hidden; }
+    #receiptOverlay, #receiptOverlay * { visibility: visible; }
+    #receiptOverlay {
+      position: absolute; inset: 0; background: #fff !important;
+      display: block; padding: 0;
+    }
+    #receiptPrintArea {
+      position: absolute; top: 0; left: 0; width: 100%;
+      box-shadow: none !important; border: none !important;
+      background: #fff !important; color: #000 !important;
+      max-height: none; overflow: visible;
+    }
+    #receiptPrintArea * { color: #000 !important; border-color: #999 !important; }
+    .receipt-actions, .print-hint { display: none !important; }
+  }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 1.5rem;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+    z-index: 60;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  [hidden] { display: none !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card, .order-row, .toast { animation: none !important; transition: none !important; }
+    .card:hover { transform: none; }
+  }
+
+  @media (max-width: 560px) {
+    .brand-name { font-size: 1.25rem; }
+    .brand-mark { height: 48px; width: 48px; }
+    .brand-mark svg { width: 26px; height: 26px; }
+  }
+
+  @media (max-width: 480px) {
+    .app { padding: 0 0.6rem 3rem; }
+
+    .tab-btn { padding: 0.42rem 0.5rem; font-size: 0.85rem; gap: 0.2rem; }
+    .stat-card { min-width: 0; padding: 0.8rem 0.9rem; }
+    .stat-card .stat-value { font-size: 1.35rem; }
+
+    .grid { gap: 0.5rem; }
+
+    .card { border-radius: 12px; cursor: pointer; }
+    .card-photo { aspect-ratio: 1 / 1; font-size: 1.7rem; }
+    .mesa-photo-free, .mesa-photo-occupied { font-size: 2.6rem; }
+    .card-tools { top: 0.3rem; left: 0.3rem; }
+    .icon-btn { width: 1.4rem; height: 1.4rem; font-size: 0.7rem; }
+    .stock-flag { font-size: 0.68rem; gap: 0.1rem; }
+    .stock-flag .warn-icon { font-size: 1.2rem; }
+
+    .card-body { padding: 0.5rem 0.55rem 0.6rem; gap: 0.25rem; }
+    .card-name {
+      font-size: 0.9rem; line-height: 1.25; font-weight: 700;
+      white-space: normal; word-break: break-word;
+    }
+    .card-price { font-size: 0.8rem; }
+
+    /* Pedido compacto */
+    .app { padding-bottom: 0.75rem; }
+    .app-header { padding: 0.6rem 0 0.5rem; }
+    .brand-tag { display: none; }
+    .tabs { margin: 0.6rem 0 0.7rem; }
+
+    .order-list { gap: 0.5rem; }
+    .order-row { padding: 0.6rem 0.65rem; gap: 0.5rem; border-radius: 12px; }
+    .order-thumb { width: 50px; height: 50px; border-radius: 11px; font-size: 1.3rem; }
+    .order-info { overflow: hidden; }
+    .order-info .name {
+      font-size: 1rem; line-height: 1.25;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .order-info .unit { font-size: 0.82rem; }
+    .stepper { gap: 0.35rem; }
+    .stepper button { width: 34px; height: 34px; font-size: 1.05rem; }
+    .stepper .qty { min-width: 1.2rem; font-size: 0.95rem; }
+    .order-subtotal { min-width: 60px; font-size: 0.95rem; }
+    .remove-btn { width: 30px; height: 30px; font-size: 1.1rem; }
+
+    .order-footer { padding: 0.7rem 0.85rem; margin-top: 0.6rem; gap: 0.5rem; }
+    .total-block .label { font-size: 0.72rem; }
+    .total-block .amount { font-size: 1.5rem; }
+    .tip-hint { font-size: 0.74rem; }
+    .tip-total { font-size: 0.85rem; }
+    .footer-actions { gap: 0.4rem; }
+    .clear-btn, .confirm-btn { padding: 0.6rem 0.85rem; font-size: 0.92rem; }
+
+    .mesa-bar { gap: 0.5rem; padding: 0.5rem 0 0.7rem; }
+    .mesa-current-name { font-size: 1.35rem; }
+    .mesa-back-btn { width: 2rem; height: 2rem; font-size: 1.05rem; }
+    .mesa-ticket-btn { padding: 0.45rem 0.85rem; font-size: 0.95rem; }
+
+    /* Modales (editar plato, nombrar mesa, ticket, recibo, WhatsApp) */
+    .modal { padding: 1.3rem; gap: 1.1rem; }
+    .modal h2 { font-size: 1.35rem; }
+    .field label { font-size: 0.92rem; }
+    .field input[type="text"], .field input[type="number"] { font-size: 1.1rem; padding: 0.75rem 0.85rem; }
+    .photo-hint { font-size: 0.85rem; }
+    .file-btn { font-size: 0.95rem; padding: 0.6rem 0.9rem; }
+    .modal-actions { gap: 0.7rem; }
+    .btn-secondary, .btn-primary, .btn-danger { font-size: 1rem; padding: 0.75rem 1.2rem; }
+    .wa-hint, .print-hint { font-size: 1rem; }
+    .receipt-biz { font-size: 1.4rem; }
+    .receipt-meta, .receipt-line { font-size: 0.95rem; }
+    .receipt-total { font-size: 1.5rem; }
+    .receipt-item-main, .ri-detail { font-size: 0.95rem; }
+    .mesa-order-heading-name, .mesa-order-heading-total { font-size: 1.05rem; }
+  }
+</style>
+<div class="app">
+  <div class="app-top">
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark" role="img" aria-label="Mi Restaurante">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M6 2v7a2 2 0 0 0 2 2v11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6 2v7M9 2v7M9 2a2 2 0 0 1-3 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 2c-1.7 0-3 2-3 5s1 5 2 5.5V22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name" id="brandName" contenteditable="true" spellcheck="false" role="textbox" aria-label="Nombre del restaurante">Mi Restaurante</span>
+        <span class="brand-tag">Menú y pedidos</span>
+        <div class="brand-meta">
+          <span class="meta-field" id="bizAddress" contenteditable="true" spellcheck="false" data-placeholder="Agregar dirección" role="textbox" aria-label="Dirección del restaurante"></span>
+          <span class="meta-sep">·</span>
+          <span class="meta-field" id="bizPhone" contenteditable="true" spellcheck="false" data-placeholder="Agregar teléfono" role="textbox" aria-label="Teléfono del restaurante"></span>
+        </div>
+        <div class="brand-whatsapp" id="whatsappRow">
+          <span class="wa-label">WhatsApp para pedidos:</span>
+          <span class="meta-field" id="bizWhatsapp" contenteditable="true" spellcheck="false" data-placeholder="+57 300 123 4567" role="textbox" aria-label="Número de WhatsApp para recibir pedidos"></span>
+        </div>
+      </div>
+    </div>
+    <button class="summary-pill" id="summaryPill" aria-label="Ver pedido">
+      <span class="n" id="summaryCount">0 items</span>
+      <span class="v" id="summaryTotal">$0</span>
+    </button>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn" id="tabMesasBtn" role="tab" aria-selected="false">Mesas</button>
+    <button class="tab-btn active" id="tabCatalogoBtn" role="tab" aria-selected="true">Menú</button>
+    <button class="tab-btn" id="tabPedidoBtn" role="tab" aria-selected="false">Pedido <span class="badge" id="pedidoBadge">0</span></button>
+    <button class="tab-btn" id="tabVentasBtn" role="tab" aria-selected="false">Ventas</button>
+    <button class="tab-btn" id="tabInventarioBtn" role="tab" aria-selected="false">Platos</button>
+  </nav>
+
+  <div class="mesa-bar" id="mesaBar" hidden>
+    <button type="button" class="mesa-back-btn" id="mesaBackBtn" aria-label="Volver a mesas">←</button>
+    <div class="mesa-current-pill">
+      <span class="mesa-current-eyebrow">Estás en</span>
+      <span class="mesa-current-name" id="mesaCurrentName">Mesa 1</span>
+    </div>
+    <button type="button" class="mesa-ticket-btn" id="mesaTicketBtn" aria-label="Ver pedido de la mesa">
+      <span class="ticket-icon">🧾</span>
+      <span id="mesaCurrentTotal">0 items · $0</span>
+    </button>
+  </div>
+  </div>
+
+  <section id="viewCatalogo">
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="viewMesas" hidden>
+    <div id="mesasListView">
+      <div class="grid" id="mesaTableGrid"></div>
+    </div>
+    <div id="mesaDetailView" hidden>
+      <div class="grid" id="mesaGrid"></div>
+    </div>
+  </section>
+
+  <section id="viewPedido" hidden>
+    <div id="orderContent"></div>
+  </section>
+
+  <section id="viewVentas" hidden>
+    <div id="ventasContent"></div>
+  </section>
+
+  <section id="viewInventario" hidden>
+    <div id="inventarioContent"></div>
+  </section>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">Nuevo plato</h2>
+    <div class="field">
+      <label for="fName">Nombre</label>
+      <input type="text" id="fName" placeholder="Lomo Saltado" maxlength="60">
+    </div>
+    <div class="field">
+      <label>Foto</label>
+      <div class="photo-field" id="dropzone">
+        <div class="photo-preview" id="fPhotoPreview">🍽️</div>
+        <div class="photo-actions">
+          <button type="button" class="file-btn" id="filePickBtn">Elegir foto</button>
+          <span class="photo-hint">o arrástrala aquí, o pégala con Ctrl+V</span>
+          <input type="file" id="fPhoto" accept="image/*" hidden>
+        </div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="fCost">Costo</label>
+        <input type="number" id="fCost" placeholder="14000" min="0" step="1">
+      </div>
+      <div class="field">
+        <label for="fStock">Porciones disponibles hoy</label>
+        <input type="number" id="fStock" placeholder="0" min="0" step="1">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="fMargin">% de ganancia</label>
+        <input type="number" id="fMargin" placeholder="60" min="0" step="1">
+      </div>
+      <div class="field">
+        <label for="fPrice">Precio de venta</label>
+        <input type="number" id="fPrice" placeholder="32000" min="0" step="1">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-danger" id="deleteBtn" hidden>Eliminar</button>
+      <button type="button" class="btn-secondary" id="cancelBtn">Cancelar</button>
+      <button type="button" class="btn-primary" id="saveBtn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="receiptOverlay" hidden>
+  <div class="modal receipt-modal" id="receiptPrintArea" role="dialog" aria-modal="true" aria-label="Recibo de venta">
+    <div id="receiptBody"></div>
+    <div class="modal-actions receipt-actions">
+      <button type="button" class="btn-secondary" id="closeReceiptBtn">Cerrar</button>
+      <button type="button" class="btn-secondary" id="copyReceiptBtn">Copiar recibo</button>
+      <button type="button" class="btn-primary" id="printReceiptBtn">Imprimir recibo</button>
+    </div>
+    <p class="print-hint">¿No se abre el diálogo de impresión? Usa Ctrl+P (⌘P en Mac), o pulsa "Copiar recibo" y pégalo (Ctrl+V) en un documento o chat para imprimirlo desde ahí.</p>
+  </div>
+</div>
+
+<div class="overlay" id="waOverlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Enviar pedido por WhatsApp">
+    <h2>Tu pedido está listo</h2>
+    <p class="wa-hint">Toca el botón para abrir WhatsApp con tu pedido ya escrito.</p>
+    <a href="#" id="waLink" target="_blank" rel="noopener" class="btn-primary wa-link">Abrir WhatsApp</a>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" id="waCopyBtn">Copiar mensaje</button>
+      <button type="button" class="btn-secondary" id="waCloseBtn">Cerrar</button>
+    </div>
+    <p class="print-hint">Si no se abre WhatsApp, usa "Copiar mensaje" y pégalo (Ctrl+V) en un chat.</p>
+  </div>
+</div>
+
+<div class="overlay" id="mesaTicketOverlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mesaTicketTitle">
+    <h2 id="mesaTicketTitle">Pedido — Mesa 1</h2>
+    <div id="mesaTicketBody"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" id="closeMesaTicketBtn">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="mesaNameOverlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mesaNameTitle">
+    <h2 id="mesaNameTitle">Nueva mesa</h2>
+    <div class="field">
+      <label for="fMesaName">Nombre (opcional)</label>
+      <input type="text" id="fMesaName" placeholder="Ej. Familia Pérez, Mesa VIP..." maxlength="40">
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-danger" id="removeMesaNameBtn" hidden>Quitar nombre</button>
+      <button type="button" class="btn-secondary" id="cancelMesaNameBtn">Cancelar</button>
+      <button type="button" class="btn-primary" id="saveMesaNameBtn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var isCustomerMode = new URLSearchParams(location.search).get("cliente") === "1";
+  if (isCustomerMode) document.documentElement.classList.add("customer-mode");
+
+  var STORAGE_KEY = "mostrador-restaurante-v1";
+
+  var defaultProducts = [
+    { id: "p1", name: "Lomo Saltado", price: 32000, cost: 14000, stock: 10, photo: null },
+    { id: "p2", name: "Ceviche Mixto", price: 35000, cost: 16000, stock: 8, photo: null },
+    { id: "p3", name: "Arroz con Pollo", price: 28000, cost: 12000, stock: 12, photo: null },
+    { id: "p4", name: "Pasta Alfredo", price: 30000, cost: 13000, stock: 9, photo: null },
+    { id: "p5", name: "Ensalada César", price: 22000, cost: 9000, stock: 15, photo: null },
+    { id: "p6", name: "Jugo Natural", price: 8000, cost: 2500, stock: 20, photo: null }
+  ];
+
+  var state = loadState();
+  var activeTab = "catalogo";
+  var mesaScreen = "list";
+  var editingId = null;
+  var modalPhotoData = null;
+  var toastTimer = null;
+
+  function defaultTables() {
+    return [1, 2, 3, 4, 5].map(function (n) { return { id: "m" + n, number: n, name: "", order: {} }; });
+  }
+
+  function mesaLabel(mesa) {
+    return mesa.name ? mesa.name : ("Mesa " + mesa.number);
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.products)) {
+          if (typeof parsed.shopName !== "string" || !parsed.shopName) parsed.shopName = "Mi Restaurante";
+          if (typeof parsed.address !== "string") parsed.address = "";
+          if (typeof parsed.phone !== "string") parsed.phone = "";
+          if (typeof parsed.whatsapp !== "string") parsed.whatsapp = "";
+          if (typeof parsed.receiptSeq !== "number") parsed.receiptSeq = 0;
+          if (!parsed.order || typeof parsed.order !== "object") parsed.order = {};
+          if (!Array.isArray(parsed.sales)) parsed.sales = [];
+          if (!Array.isArray(parsed.tables) || parsed.tables.length === 0) parsed.tables = defaultTables();
+          parsed.tables.forEach(function (t) {
+            if (!t.order || typeof t.order !== "object") t.order = {};
+            if (typeof t.name !== "string") t.name = "";
+          });
+          if (typeof parsed.activeMesaId !== "string") parsed.activeMesaId = parsed.tables[0].id;
+          parsed.products.forEach(function (p) {
+            if (typeof p.cost !== "number") p.cost = 0;
+            if (typeof p.stock !== "number") p.stock = 0;
+          });
+          return parsed;
+        }
+      }
+    } catch (e) {}
+    return { shopName: "Mi Restaurante", address: "", phone: "", whatsapp: "", receiptSeq: 0, products: defaultProducts, order: {}, sales: [], tables: defaultTables(), activeMesaId: "m1" };
+  }
+
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function money(n) {
+    return "$" + Math.round(n).toLocaleString("es-CO");
+  }
+
+  function pickEmoji(name) {
+    var n = (name || "").toLowerCase();
+    if (n.indexOf("lomo") > -1 || n.indexOf("carne") > -1 || n.indexOf("res") > -1 || n.indexOf("bistec") > -1) return "🥩";
+    if (n.indexOf("ceviche") > -1 || n.indexOf("pescado") > -1 || n.indexOf("marisco") > -1 || n.indexOf("camar") > -1) return "🐟";
+    if (n.indexOf("pollo") > -1) return "🍗";
+    if (n.indexOf("pasta") > -1 || n.indexOf("spaghetti") > -1 || n.indexOf("espagueti") > -1) return "🍝";
+    if (n.indexOf("ensalada") > -1) return "🥗";
+    if (n.indexOf("sopa") > -1 || n.indexOf("caldo") > -1 || n.indexOf("crema") > -1) return "🍲";
+    if (n.indexOf("pizza") > -1) return "🍕";
+    if (n.indexOf("hamburgu") > -1) return "🍔";
+    if (n.indexOf("taco") > -1 || n.indexOf("burrito") > -1) return "🌮";
+    if (n.indexOf("arroz") > -1) return "🍚";
+    if (n.indexOf("jugo") > -1 || n.indexOf("bebida") > -1 || n.indexOf("gaseosa") > -1 || n.indexOf("limonada") > -1) return "🥤";
+    if (n.indexOf("café") > -1 || n.indexOf("cafe") > -1) return "☕";
+    if (n.indexOf("postre") > -1 || n.indexOf("torta") > -1 || n.indexOf("dulce") > -1 || n.indexOf("helado") > -1) return "🍰";
+    if (n.indexOf("pan") > -1 || n.indexOf("sandwich") > -1 || n.indexOf("sándwich") > -1) return "🥪";
+    return "🍽️";
+  }
+
+  function phClass(id) {
+    return "ph1";
+  }
+
+  function esc(s) {
+    var d = document.createElement("div");
+    d.textContent = s == null ? "" : s;
+    return d.innerHTML;
+  }
+
+  function el(html) {
+    var t = document.createElement("template");
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+
+  /* ---------- Header ---------- */
+
+  var brandNameEl = document.getElementById("brandName");
+  var bizAddressEl = document.getElementById("bizAddress");
+  var bizPhoneEl = document.getElementById("bizPhone");
+  var bizWhatsappEl = document.getElementById("bizWhatsapp");
+  brandNameEl.textContent = state.shopName;
+  bizAddressEl.textContent = state.address;
+  bizPhoneEl.textContent = state.phone;
+  bizWhatsappEl.textContent = state.whatsapp;
+  if (isCustomerMode) {
+    brandNameEl.setAttribute("contenteditable", "false");
+    bizAddressEl.setAttribute("contenteditable", "false");
+    bizPhoneEl.setAttribute("contenteditable", "false");
+  }
+  brandNameEl.addEventListener("blur", function () {
+    state.shopName = brandNameEl.textContent.trim() || "Mi Restaurante";
+    brandNameEl.textContent = state.shopName;
+    saveState();
+  });
+  bizAddressEl.addEventListener("blur", function () {
+    state.address = bizAddressEl.textContent.trim();
+    saveState();
+  });
+  bizPhoneEl.addEventListener("blur", function () {
+    state.phone = bizPhoneEl.textContent.trim();
+    saveState();
+  });
+  bizWhatsappEl.addEventListener("blur", function () {
+    state.whatsapp = bizWhatsappEl.textContent.trim();
+    saveState();
+  });
+  [brandNameEl, bizAddressEl, bizPhoneEl, bizWhatsappEl].forEach(function (elx) {
+    elx.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); elx.blur(); }
+    });
+  });
+
+  document.getElementById("summaryPill").addEventListener("click", function () { switchTab("pedido"); });
+
+  /* ---------- Tabs ---------- */
+  var tabCatalogoBtn = document.getElementById("tabCatalogoBtn");
+  var tabMesasBtn = document.getElementById("tabMesasBtn");
+  var tabPedidoBtn = document.getElementById("tabPedidoBtn");
+  var tabVentasBtn = document.getElementById("tabVentasBtn");
+  var tabInventarioBtn = document.getElementById("tabInventarioBtn");
+  var viewCatalogo = document.getElementById("viewCatalogo");
+  var viewMesas = document.getElementById("viewMesas");
+  var viewPedido = document.getElementById("viewPedido");
+  var viewVentas = document.getElementById("viewVentas");
+  var viewInventario = document.getElementById("viewInventario");
+
+  function switchTab(tab) {
+    activeTab = tab;
+    var isCat = tab === "catalogo";
+    var isMesas = tab === "mesas";
+    var isPedido = tab === "pedido";
+    var isVentas = tab === "ventas";
+    var isInventario = tab === "inventario";
+    viewCatalogo.hidden = !isCat;
+    viewMesas.hidden = !isMesas;
+    viewPedido.hidden = !isPedido;
+    viewVentas.hidden = !isVentas;
+    viewInventario.hidden = !isInventario;
+    if (!isMesas) mesaBar.hidden = true;
+    tabCatalogoBtn.classList.toggle("active", isCat);
+    tabCatalogoBtn.setAttribute("aria-selected", isCat);
+    tabMesasBtn.classList.toggle("active", isMesas);
+    tabMesasBtn.setAttribute("aria-selected", isMesas);
+    tabPedidoBtn.classList.toggle("active", isPedido);
+    tabPedidoBtn.setAttribute("aria-selected", isPedido);
+    tabVentasBtn.classList.toggle("active", isVentas);
+    tabVentasBtn.setAttribute("aria-selected", isVentas);
+    tabInventarioBtn.classList.toggle("active", isInventario);
+    tabInventarioBtn.setAttribute("aria-selected", isInventario);
+    if (isCat) renderCatalogo();
+    if (isMesas) renderMesas();
+    if (isPedido) renderPedido();
+    if (isVentas) renderVentas();
+    if (isInventario) renderInventario();
+  }
+  tabCatalogoBtn.addEventListener("click", function () { switchTab("catalogo"); });
+  tabMesasBtn.addEventListener("click", function () { mesaScreen = "list"; switchTab("mesas"); });
+  tabPedidoBtn.addEventListener("click", function () { switchTab("pedido"); });
+  tabInventarioBtn.addEventListener("click", function () { switchTab("inventario"); });
+  tabVentasBtn.addEventListener("click", function () { switchTab("ventas"); });
+
+  /* ---------- Toast ---------- */
+  function showToast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 1600);
+  }
+
+  /* ---------- Order helpers ---------- */
+  function orderCount() {
+    var n = 0;
+    for (var id in state.order) n += state.order[id];
+    return n;
+  }
+  function orderTotal() {
+    var total = 0;
+    for (var id in state.order) {
+      var p = findProduct(id);
+      if (p) total += p.price * state.order[id];
+    }
+    return total;
+  }
+  function findProduct(id) {
+    for (var i = 0; i < state.products.length; i++) if (state.products[i].id === id) return state.products[i];
+    return null;
+  }
+
+  /* Stock is a shared pool: what's reserved at the counter order plus every table's order. */
+  function totalReservedQty(productId) {
+    var n = state.order[productId] || 0;
+    state.tables.forEach(function (t) { n += t.order[productId] || 0; });
+    return n;
+  }
+
+  function outOfStockToast(p) {
+    showToast("No quedan porciones disponibles de " + p.name);
+  }
+
+  function refreshSummary() {
+    document.getElementById("summaryCount").textContent = orderCount() + (orderCount() === 1 ? " item" : " items");
+    document.getElementById("summaryTotal").textContent = money(orderTotal());
+    document.getElementById("pedidoBadge").textContent = orderCount();
+  }
+
+  function addToOrder(id) {
+    var p = findProduct(id);
+    if (!p) return;
+    if (totalReservedQty(id) >= (p.stock || 0)) {
+      outOfStockToast(p);
+      return;
+    }
+    state.order[id] = (state.order[id] || 0) + 1;
+    saveState();
+    refreshSummary();
+    renderCatalogo();
+    showToast("Agregado: " + p.name);
+  }
+
+  function changeQty(id, delta) {
+    if (delta > 0) {
+      var p = findProduct(id);
+      if (p && totalReservedQty(id) >= (p.stock || 0)) {
+        outOfStockToast(p);
+        return;
+      }
+    }
+    var next = (state.order[id] || 0) + delta;
+    if (next <= 0) delete state.order[id];
+    else state.order[id] = next;
+    saveState();
+    refreshSummary();
+    renderPedido();
+  }
+
+  function removeFromOrder(id) {
+    delete state.order[id];
+    saveState();
+    refreshSummary();
+    renderPedido();
+  }
+
+  function armConfirm(btn, confirmLabel, onConfirm) {
+    var originalLabel = btn.textContent;
+    var armed = false;
+    var timer = null;
+    function reset() {
+      armed = false;
+      clearTimeout(timer);
+      btn.textContent = originalLabel;
+      btn.classList.remove("confirming");
+    }
+    btn.addEventListener("click", function () {
+      if (!armed) {
+        armed = true;
+        btn.textContent = confirmLabel;
+        btn.classList.add("confirming");
+        timer = setTimeout(reset, 2800);
+      } else {
+        reset();
+        onConfirm();
+      }
+    });
+    return reset;
+  }
+
+  function clearOrder() {
+    state.order = {};
+    saveState();
+    refreshSummary();
+    renderPedido();
+  }
+
+  function pad(n, width) {
+    var s = String(n);
+    while (s.length < width) s = "0" + s;
+    return s;
+  }
+
+  function sendOrderWhatsApp() {
+    var ids = Object.keys(state.order).filter(function (id) { return findProduct(id); });
+    if (ids.length === 0) return;
+
+    var digits = (state.whatsapp || "").replace(/\D/g, "");
+    if (!digits) {
+      showToast("Este restaurante todavía no configuró un WhatsApp para pedidos");
+      return;
+    }
+
+    var nameInput = document.getElementById("customerName");
+    var customerName = nameInput ? nameInput.value.trim() : "";
+
+    var lines = [];
+    lines.push("Hola " + state.shopName + ", quiero hacer este pedido:");
+    lines.push("");
+    ids.forEach(function (id) {
+      var p = findProduct(id);
+      var qty = state.order[id];
+      lines.push(qty + "x " + p.name + " - " + money(p.price * qty));
+    });
+    lines.push("");
+    lines.push("Total: " + money(orderTotal()));
+    if (customerName) lines.push("");
+    if (customerName) lines.push("Mi nombre: " + customerName);
+
+    currentWaText = lines.join("\n");
+    document.getElementById("waLink").href = "https://wa.me/" + digits + "?text=" + encodeURIComponent(currentWaText);
+    document.getElementById("waOverlay").hidden = false;
+  }
+
+  function closeWaOverlay() { document.getElementById("waOverlay").hidden = true; }
+
+  function finishWaOrder() {
+    state.order = {};
+    saveState();
+    refreshSummary();
+    renderPedido();
+    closeWaOverlay();
+    showToast("Pedido enviado ✓");
+  }
+
+  var waOverlayEl = document.getElementById("waOverlay");
+  document.getElementById("waLink").addEventListener("click", finishWaOrder);
+  document.getElementById("waCloseBtn").addEventListener("click", closeWaOverlay);
+  waOverlayEl.addEventListener("click", function (e) { if (e.target === waOverlayEl) closeWaOverlay(); });
+  document.getElementById("waCopyBtn").addEventListener("click", function () {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(currentWaText).then(function () {
+        showToast("Mensaje copiado ✓");
+      }).catch(function () {
+        showToast(legacyCopy(currentWaText) ? "Mensaje copiado ✓" : "No se pudo copiar");
+      });
+    } else {
+      showToast(legacyCopy(currentWaText) ? "Mensaje copiado ✓" : "No se pudo copiar");
+    }
+  });
+
+  function confirmOrder() {
+    var ids = Object.keys(state.order).filter(function (id) { return findProduct(id); });
+    if (ids.length === 0) return;
+
+    var items = ids.map(function (id) {
+      var p = findProduct(id);
+      var qty = state.order[id];
+      return { name: p.name, price: p.price, qty: qty, subtotal: p.price * qty };
+    });
+    var total = items.reduce(function (sum, it) { return sum + it.subtotal; }, 0);
+
+    ids.forEach(function (id) {
+      var p = findProduct(id);
+      p.stock = Math.max(0, (p.stock || 0) - state.order[id]);
+    });
+
+    state.receiptSeq = (state.receiptSeq || 0) + 1;
+    var now = new Date();
+    var receipt = {
+      number: state.receiptSeq,
+      date: now,
+      business: { name: state.shopName, address: state.address, phone: state.phone },
+      items: items,
+      total: total
+    };
+
+    state.sales.push({
+      number: state.receiptSeq,
+      dateISO: now.toISOString(),
+      items: items,
+      total: total
+    });
+
+    state.order = {};
+    saveState();
+    refreshSummary();
+    renderPedido();
+    openReceipt(receipt);
+  }
+
+  function isSameDay(a, b) {
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  }
+  function isSameMonth(a, b) {
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
+  }
+  function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  /* ---------- Render: Ventas ---------- */
+  var ventasContent = document.getElementById("ventasContent");
+
+  function buildSaleRow(s) {
+    var d = new Date(s.dateISO);
+    var timeStr = d.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+    var itemsSummary = (s.tableLabel ? s.tableLabel + " · " : "") + s.items.map(function (it) { return it.qty + "× " + it.name; }).join(", ");
+    var row = el(
+      '<div class="sale-row">' +
+        '<div class="sale-time">' + timeStr + '</div>' +
+        '<div class="sale-info">' +
+          '<div class="items">' + esc(itemsSummary) + '</div>' +
+          '<div class="num">Recibo N.º ' + pad(s.number, 4) + '</div>' +
+        '</div>' +
+        '<div class="sale-total">' + money(s.total) + '</div>' +
+      '</div>'
+    );
+    row.addEventListener("click", function () {
+      openReceipt({
+        number: s.number,
+        date: d,
+        business: { name: state.shopName, address: state.address, phone: state.phone },
+        tableLabel: s.tableLabel,
+        items: s.items,
+        total: s.total
+      });
+    });
+    return row;
+  }
+
+  function dayLabel(d, now) {
+    var yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    if (isSameDay(d, now)) return "Hoy";
+    if (isSameDay(d, yesterday)) return "Ayer";
+    return capitalize(d.toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" }));
+  }
+
+  function groupSalesByDay(sales) {
+    var groups = {};
+    sales.forEach(function (s) {
+      var d = new Date(s.dateISO);
+      var key = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+      if (!groups[key]) groups[key] = { date: d, sales: [] };
+      groups[key].sales.push(s);
+    });
+    return Object.keys(groups)
+      .map(function (k) { return groups[k]; })
+      .sort(function (a, b) { return b.date - a.date; });
+  }
+
+  function renderVentas() {
+    var now = new Date();
+    var yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    var todaySales = state.sales.filter(function (s) { return isSameDay(new Date(s.dateISO), now); });
+    var yesterdaySales = state.sales.filter(function (s) { return isSameDay(new Date(s.dateISO), yesterday); });
+    var monthSales = state.sales.filter(function (s) { return isSameMonth(new Date(s.dateISO), now); });
+
+    var todayTotal = todaySales.reduce(function (sum, s) { return sum + s.total; }, 0);
+    var yesterdayTotal = yesterdaySales.reduce(function (sum, s) { return sum + s.total; }, 0);
+    var monthTotal = monthSales.reduce(function (sum, s) { return sum + s.total; }, 0);
+    var monthLabel = capitalize(now.toLocaleDateString("es-CO", { month: "long", year: "numeric" }));
+
+    var html =
+      '<div class="sales-stats">' +
+        '<div class="stat-card">' +
+          '<div class="stat-label">Hoy</div>' +
+          '<div class="stat-value">' + money(todayTotal) + '</div>' +
+          '<div class="stat-sub">' + todaySales.length + (todaySales.length === 1 ? " pedido" : " pedidos") + '</div>' +
+        '</div>' +
+        '<div class="stat-card">' +
+          '<div class="stat-label">Ayer</div>' +
+          '<div class="stat-value">' + money(yesterdayTotal) + '</div>' +
+          '<div class="stat-sub">' + yesterdaySales.length + (yesterdaySales.length === 1 ? " pedido" : " pedidos") + '</div>' +
+        '</div>' +
+        '<div class="stat-card">' +
+          '<div class="stat-label">' + esc(monthLabel) + '</div>' +
+          '<div class="stat-value">' + money(monthTotal) + '</div>' +
+          '<div class="stat-sub">' + monthSales.length + (monthSales.length === 1 ? " pedido" : " pedidos") + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<h2 class="sales-section-title">Historial de ventas</h2>';
+
+    var dayGroups = groupSalesByDay(state.sales);
+
+    if (dayGroups.length === 0) {
+      html += '<div class="empty-state"><div class="glyph">📋</div><div>Todavía no has confirmado ningún pedido.</div></div>';
+      ventasContent.innerHTML = html;
+      return;
+    }
+
+    html += '<div id="historyList"></div>';
+    ventasContent.innerHTML = html;
+
+    var historyList = document.getElementById("historyList");
+    dayGroups.forEach(function (group, idx) {
+      var dayTotal = group.sales.reduce(function (sum, s) { return sum + s.total; }, 0);
+      var sortedSales = group.sales.slice().sort(function (a, b) { return new Date(b.dateISO) - new Date(a.dateISO); });
+
+      var groupEl = el(
+        '<div class="day-group">' +
+          '<button type="button" class="day-header">' +
+            '<span class="day-label">' + esc(dayLabel(group.date, now)) + '</span>' +
+            '<span class="day-count">' + group.sales.length + (group.sales.length === 1 ? " pedido" : " pedidos") + '</span>' +
+            '<span class="day-total">' + money(dayTotal) + '</span>' +
+            '<span class="day-chevron">▾</span>' +
+          '</button>' +
+          '<div class="day-sales" hidden></div>' +
+        '</div>'
+      );
+
+      var salesContainer = groupEl.querySelector(".day-sales");
+      sortedSales.forEach(function (s) { salesContainer.appendChild(buildSaleRow(s)); });
+
+      groupEl.querySelector(".day-header").addEventListener("click", function () {
+        var isOpen = groupEl.classList.toggle("open");
+        salesContainer.hidden = !isOpen;
+      });
+
+      if (idx === 0) {
+        groupEl.classList.add("open");
+        salesContainer.hidden = false;
+      }
+
+      historyList.appendChild(groupEl);
+    });
+  }
+
+  /* ---------- Render: Platos (admin) ---------- */
+  var inventarioContent = document.getElementById("inventarioContent");
+
+  function changeStock(id, delta) {
+    var p = findProduct(id);
+    if (!p) return;
+    p.stock = Math.max(0, (p.stock || 0) + delta);
+    saveState();
+    renderInventario();
+  }
+
+  function renderInventario() {
+    var html = '<button class="add-inv-btn" id="addInvBtn"><span class="plus">+</span><span>Agregar plato al menú</span></button>';
+
+    if (state.products.length === 0) {
+      html += '<div class="empty-state"><div class="glyph">📋</div><div>Todavía no tienes platos en el menú.</div></div>';
+      inventarioContent.innerHTML = html;
+      document.getElementById("addInvBtn").addEventListener("click", function () { openModal(null); });
+      return;
+    }
+
+    html += '<div class="inv-list" id="invList"></div>';
+    inventarioContent.innerHTML = html;
+    document.getElementById("addInvBtn").addEventListener("click", function () { openModal(null); });
+
+    var list = document.getElementById("invList");
+    state.products.forEach(function (p) {
+      var marginText = p.cost > 0 ? Math.round(((p.price - p.cost) / p.cost) * 100) + "%" : "—";
+      var row = el(
+        '<div class="inv-row" data-id="' + p.id + '">' +
+          '<div class="inv-thumb ' + (p.photo ? "" : phClass(p.id)) + '">' +
+            (p.photo ? '<img src="' + p.photo + '" alt="">' : '<span>' + pickEmoji(p.name) + '</span>') +
+          '</div>' +
+          '<div class="inv-info">' +
+            '<div class="name">' + esc(p.name) + '</div>' +
+            '<div class="prices">' +
+              '<span>Costo ' + money(p.cost) + '</span>' +
+              '<span class="venta">Venta ' + money(p.price) + '</span>' +
+              '<span class="margin">' + marginText + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="inv-stock">' +
+            '<div class="stepper">' +
+              '<button class="dec" aria-label="Quitar disponibilidad">−</button>' +
+              '<span class="qty">' + p.stock + '</span>' +
+              '<button class="inc" aria-label="Agregar disponibilidad">+</button>' +
+            '</div>' +
+            '<div class="stock-label">disponibles</div>' +
+          '</div>' +
+        '</div>'
+      );
+      row.querySelector(".dec").addEventListener("click", function (e) { e.stopPropagation(); changeStock(p.id, -1); });
+      row.querySelector(".inc").addEventListener("click", function (e) { e.stopPropagation(); changeStock(p.id, 1); });
+      row.addEventListener("click", function () { openModal(p.id); });
+      list.appendChild(row);
+    });
+  }
+
+  /* ---------- Render: tarjeta de producto (compartida entre Menú y Mesas) ---------- */
+  function buildProductCard(p, badgeQty, onAdd) {
+    var outOfStock = totalReservedQty(p.id) >= (p.stock || 0);
+    var card = el(
+      '<div class="card' + (outOfStock ? " out-of-stock" : "") + '" data-id="' + p.id + '">' +
+        '<div class="card-tools">' +
+          '<button class="icon-btn edit-btn" title="Editar" aria-label="Editar plato">✎</button>' +
+        '</div>' +
+        '<div class="card-photo ' + (p.photo ? "" : phClass(p.id)) + '">' +
+          (p.photo ? '<img src="' + p.photo + '" alt="' + esc(p.name) + '">' : '<span>' + pickEmoji(p.name) + '</span>') +
+          (badgeQty > 0 ? '<span class="qty-badge">×' + badgeQty + '</span>' : "") +
+          (outOfStock ? '<span class="stock-flag"><span class="warn-icon">⚠️</span>Agotado</span>' : "") +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="card-name">' + esc(p.name) + '</div>' +
+          '<div class="card-price">' + money(p.price) + '</div>' +
+        '</div>' +
+      '</div>'
+    );
+    if (!outOfStock) {
+      card.addEventListener("click", function () { onAdd(p.id); });
+    } else {
+      card.addEventListener("click", function () { outOfStockToast(p); });
+    }
+    card.querySelector(".edit-btn").addEventListener("click", function (e) {
+      e.stopPropagation();
+      openModal(p.id);
+    });
+    return card;
+  }
+
+  /* ---------- Render: Menú ---------- */
+  var grid = document.getElementById("grid");
+
+  function renderCatalogo() {
+    if (state.products.length === 0) {
+      grid.style.display = "block";
+      grid.innerHTML = '<div class="empty-state"><div class="glyph">🍽️</div><div>Todavía no tienes platos.<br>Agrégalos desde la pestaña Platos.</div></div>';
+      return;
+    }
+    grid.style.display = "";
+    grid.innerHTML = "";
+    state.products.forEach(function (p) {
+      var qty = state.order[p.id] || 0;
+      grid.appendChild(buildProductCard(p, qty, addToOrder));
+    });
+  }
+
+  /* ---------- Render: Mesas ---------- */
+  var mesaBar = document.getElementById("mesaBar");
+  var mesaCurrentName = document.getElementById("mesaCurrentName");
+  var mesaCurrentTotal = document.getElementById("mesaCurrentTotal");
+  var mesasListView = document.getElementById("mesasListView");
+  var mesaDetailView = document.getElementById("mesaDetailView");
+  var mesaTableGrid = document.getElementById("mesaTableGrid");
+  var mesaGrid = document.getElementById("mesaGrid");
+  var mesaTicketBtn = document.getElementById("mesaTicketBtn");
+  var mesaTicketOverlay = document.getElementById("mesaTicketOverlay");
+  var mesaTicketTitle = document.getElementById("mesaTicketTitle");
+  var mesaTicketBody = document.getElementById("mesaTicketBody");
+
+  function getMesa(id) {
+    var found = state.tables.filter(function (t) { return t.id === id; })[0];
+    return found || state.tables[0];
+  }
+  function mesaCount(mesa) {
+    var n = 0;
+    for (var id in mesa.order) n += mesa.order[id];
+    return n;
+  }
+  function mesaTotal(mesa) {
+    var total = 0;
+    for (var id in mesa.order) {
+      var p = findProduct(id);
+      if (p) total += p.price * mesa.order[id];
+    }
+    return total;
+  }
+
+  function enterMesa(id) {
+    state.activeMesaId = id;
+    mesaScreen = "detail";
+    saveState();
+    renderMesas();
+  }
+
+  document.getElementById("mesaBackBtn").addEventListener("click", function () {
+    mesaScreen = "list";
+    renderMesas();
+  });
+
+  /* Mesa order mutations can be triggered either from the Mesas tab or from the
+     per-mesa breakdown in the Pedido tab, so refresh whichever is on screen. */
+  function afterMesaOrderChange() {
+    if (activeTab === "mesas") renderMesas();
+    if (activeTab === "pedido") renderPedido();
+    if (!mesaTicketOverlay.hidden) renderMesaTicketModal();
+  }
+
+  function openMesaTicket() {
+    renderMesaTicketModal();
+    mesaTicketOverlay.hidden = false;
+  }
+  function closeMesaTicket() { mesaTicketOverlay.hidden = true; }
+
+  function renderMesaTicketModal() {
+    var mesa = getMesa(state.activeMesaId);
+    mesaTicketTitle.textContent = "Pedido — " + mesaLabel(mesa);
+    mesaTicketBody.innerHTML = "";
+    mesaTicketBody.appendChild(buildMesaOrderSection(mesa, false));
+  }
+
+  mesaTicketBtn.addEventListener("click", openMesaTicket);
+  document.getElementById("closeMesaTicketBtn").addEventListener("click", closeMesaTicket);
+  mesaTicketOverlay.addEventListener("click", function (e) { if (e.target === mesaTicketOverlay) closeMesaTicket(); });
+
+  function addToMesa(mesaId, productId) {
+    var mesa = getMesa(mesaId);
+    var p = findProduct(productId);
+    if (!p) return;
+    if (totalReservedQty(productId) >= (p.stock || 0)) {
+      outOfStockToast(p);
+      return;
+    }
+    mesa.order[productId] = (mesa.order[productId] || 0) + 1;
+    saveState();
+    afterMesaOrderChange();
+  }
+
+  function changeMesaQty(mesaId, productId, delta) {
+    var mesa = getMesa(mesaId);
+    if (delta > 0) {
+      var p = findProduct(productId);
+      if (p && totalReservedQty(productId) >= (p.stock || 0)) {
+        outOfStockToast(p);
+        return;
+      }
+    }
+    var next = (mesa.order[productId] || 0) + delta;
+    if (next <= 0) delete mesa.order[productId];
+    else mesa.order[productId] = next;
+    saveState();
+    afterMesaOrderChange();
+  }
+
+  function removeFromMesa(mesaId, productId) {
+    var mesa = getMesa(mesaId);
+    delete mesa.order[productId];
+    saveState();
+    afterMesaOrderChange();
+  }
+
+  function clearMesaOrder(mesaId) {
+    var mesa = getMesa(mesaId);
+    mesa.order = {};
+    saveState();
+    afterMesaOrderChange();
+  }
+
+  function confirmMesaOrder(mesaId) {
+    var mesa = getMesa(mesaId);
+    var ids = Object.keys(mesa.order).filter(function (id) { return findProduct(id); });
+    if (ids.length === 0) return;
+
+    var items = ids.map(function (id) {
+      var p = findProduct(id);
+      var qty = mesa.order[id];
+      return { name: p.name, price: p.price, qty: qty, subtotal: p.price * qty };
+    });
+    var total = items.reduce(function (sum, it) { return sum + it.subtotal; }, 0);
+
+    ids.forEach(function (id) {
+      var p = findProduct(id);
+      p.stock = Math.max(0, (p.stock || 0) - mesa.order[id]);
+    });
+
+    state.receiptSeq = (state.receiptSeq || 0) + 1;
+    var now = new Date();
+    var receipt = {
+      number: state.receiptSeq,
+      date: now,
+      business: { name: state.shopName, address: state.address, phone: state.phone },
+      tableLabel: mesaLabel(mesa),
+      items: items,
+      total: total
+    };
+
+    state.sales.push({
+      number: state.receiptSeq,
+      dateISO: now.toISOString(),
+      tableLabel: mesaLabel(mesa),
+      items: items,
+      total: total
+    });
+
+    mesa.order = {};
+    saveState();
+    mesaTicketOverlay.hidden = true;
+    afterMesaOrderChange();
+    openReceipt(receipt);
+  }
+
+  function renderMesaBar() {
+    var mesa = getMesa(state.activeMesaId);
+    mesaCurrentName.textContent = mesaLabel(mesa);
+    mesaCurrentTotal.textContent = mesaCount(mesa) + (mesaCount(mesa) === 1 ? " item" : " items") + " · " + money(mesaTotal(mesa));
+  }
+
+  function buildTableCard(mesa) {
+    var count = mesaCount(mesa);
+    var occupied = count > 0;
+    var card = el(
+      '<div class="card mesa-card' + (occupied ? " mesa-occupied" : "") + '" data-id="' + mesa.id + '">' +
+        '<div class="card-tools">' +
+          '<button class="icon-btn mesa-rename-btn" title="Nombrar mesa" aria-label="Nombrar mesa">✎</button>' +
+        '</div>' +
+        '<div class="card-photo ' + (occupied ? "mesa-photo-occupied" : "mesa-photo-free") + '">' +
+          '<span>' + (occupied ? "🍽️" : "🪑") + '</span>' +
+          (occupied ? '<span class="qty-badge">' + count + '</span>' : "") +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="card-name">' + (mesa.name ? esc(mesa.name) : "Mesa " + mesa.number) + '</div>' +
+          '<div class="card-price">' + (occupied ? money(mesaTotal(mesa)) : "Libre") + '</div>' +
+        '</div>' +
+      '</div>'
+    );
+    card.querySelector(".mesa-rename-btn").addEventListener("click", function (e) {
+      e.stopPropagation();
+      openMesaNameModal(mesa.id);
+    });
+    card.addEventListener("click", function () { enterMesa(mesa.id); });
+    return card;
+  }
+
+  var editingMesaId = null;
+  var mesaNameOverlay = document.getElementById("mesaNameOverlay");
+  var mesaNameTitle = document.getElementById("mesaNameTitle");
+  var fMesaName = document.getElementById("fMesaName");
+  var removeMesaNameBtn = document.getElementById("removeMesaNameBtn");
+
+  function openMesaNameModal(mesaId) {
+    editingMesaId = mesaId;
+    var mesa = mesaId ? getMesa(mesaId) : null;
+    mesaNameTitle.textContent = mesa ? ("Nombre de Mesa " + mesa.number) : "Nueva mesa";
+    fMesaName.value = mesa ? mesa.name : "";
+    removeMesaNameBtn.hidden = !(mesa && mesa.name);
+    mesaNameOverlay.hidden = false;
+    setTimeout(function () { fMesaName.focus(); }, 0);
+  }
+
+  function closeMesaNameModal() {
+    mesaNameOverlay.hidden = true;
+    editingMesaId = null;
+  }
+
+  document.getElementById("cancelMesaNameBtn").addEventListener("click", closeMesaNameModal);
+  mesaNameOverlay.addEventListener("click", function (e) { if (e.target === mesaNameOverlay) closeMesaNameModal(); });
+  fMesaName.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); document.getElementById("saveMesaNameBtn").click(); }
+  });
+
+  document.getElementById("saveMesaNameBtn").addEventListener("click", function () {
+    var name = fMesaName.value.trim();
+    if (editingMesaId) {
+      getMesa(editingMesaId).name = name;
+      saveState();
+      renderMesaList();
+    } else {
+      var maxNumber = state.tables.reduce(function (max, t) { return Math.max(max, t.number); }, 0);
+      var newNumber = maxNumber + 1;
+      state.tables.push({ id: "m" + newNumber, number: newNumber, name: name, order: {} });
+      saveState();
+      renderMesaList();
+      showToast((name ? name + " — Mesa " : "Mesa ") + newNumber + " agregada");
+    }
+    closeMesaNameModal();
+  });
+
+  removeMesaNameBtn.addEventListener("click", function () {
+    if (editingMesaId) {
+      getMesa(editingMesaId).name = "";
+      saveState();
+      renderMesaList();
+    }
+    closeMesaNameModal();
+  });
+
+  function buildAddMesaCard() {
+    var card = el(
+      '<div class="card mesa-card mesa-add-card" role="button" tabindex="0" aria-label="Agregar mesa">' +
+        '<div class="card-photo"><span class="plus">+</span></div>' +
+        '<div class="card-body"><div class="card-name">Agregar mesa</div></div>' +
+      '</div>'
+    );
+    card.addEventListener("click", function () { openMesaNameModal(null); });
+    card.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openMesaNameModal(null); }
+    });
+    return card;
+  }
+
+  function renderMesaList() {
+    mesaTableGrid.innerHTML = "";
+    state.tables.forEach(function (t) { mesaTableGrid.appendChild(buildTableCard(t)); });
+    mesaTableGrid.appendChild(buildAddMesaCard());
+  }
+
+  /* Builds the order list + footer for one table. Used both inside the Mesas
+     detail view (no heading, the sticky bar already names the table) and in
+     the Pedido tab's per-table breakdown (heading shown, since several can
+     appear together there). */
+  function buildMesaOrderSection(mesa, showHeading) {
+    var section = document.createElement("div");
+    section.className = "mesa-order-section";
+
+    if (showHeading) {
+      section.appendChild(el(
+        '<div class="mesa-order-heading">' +
+          '<span class="mesa-order-heading-name">' + esc(mesaLabel(mesa)) + '</span>' +
+          '<span class="mesa-order-heading-total">' + money(mesaTotal(mesa)) + '</span>' +
+        '</div>'
+      ));
+    }
+
+    var ids = Object.keys(mesa.order).filter(function (id) { return findProduct(id); });
+    if (ids.length === 0) {
+      section.appendChild(el(
+        '<div class="empty-state">' +
+          '<div class="glyph">🧾</div>' +
+          '<div>' + esc(mesaLabel(mesa)) + ' todavía no tiene pedido.<br>Toca un plato para agregarlo.</div>' +
+        '</div>'
+      ));
+      return section;
+    }
+
+    var list = document.createElement("div");
+    list.className = "order-list";
+    ids.forEach(function (id) {
+      var p = findProduct(id);
+      var qty = mesa.order[id];
+      var row = el(
+        '<div class="order-row" data-id="' + id + '">' +
+          '<div class="order-thumb ' + (p.photo ? "" : phClass(p.id)) + '">' +
+            (p.photo ? '<img src="' + p.photo + '" alt="">' : '<span>' + pickEmoji(p.name) + '</span>') +
+          '</div>' +
+          '<div class="order-info">' +
+            '<div class="name">' + esc(p.name) + '</div>' +
+            '<div class="unit">' + money(p.price) + ' c/u</div>' +
+          '</div>' +
+          '<div class="stepper">' +
+            '<button class="dec" aria-label="Quitar uno">−</button>' +
+            '<span class="qty">' + qty + '</span>' +
+            '<button class="inc" aria-label="Agregar uno">+</button>' +
+          '</div>' +
+          '<div class="order-subtotal">' + money(p.price * qty) + '</div>' +
+          '<button class="remove-btn" aria-label="Quitar del pedido">✕</button>' +
+        '</div>'
+      );
+      row.querySelector(".dec").addEventListener("click", function () { changeMesaQty(mesa.id, id, -1); });
+      row.querySelector(".inc").addEventListener("click", function () { changeMesaQty(mesa.id, id, 1); });
+      row.querySelector(".remove-btn").addEventListener("click", function () { removeFromMesa(mesa.id, id); });
+      list.appendChild(row);
+    });
+
+    var footer = el(
+      '<div class="order-footer">' +
+        '<div class="total-block">' +
+          '<div class="label">Total ' + esc(mesaLabel(mesa)) + '</div>' +
+          '<div class="amount">' + money(mesaTotal(mesa)) + '</div>' +
+          '<div class="tip-hint">Propina sugerida (10%): ' + money(mesaTotal(mesa) * 0.1) + '</div>' +
+          '<div class="tip-total">Total con propina: ' + money(mesaTotal(mesa) * 1.1) + '</div>' +
+        '</div>' +
+        '<div class="footer-actions">' +
+          '<button class="clear-btn">Vaciar mesa</button>' +
+          '<button class="confirm-btn">Cobrar mesa</button>' +
+        '</div>' +
+      '</div>'
+    );
+    armConfirm(footer.querySelector(".clear-btn"), "¿Confirmar?", function () { clearMesaOrder(mesa.id); });
+    footer.querySelector(".confirm-btn").addEventListener("click", function () { confirmMesaOrder(mesa.id); });
+
+    section.appendChild(list);
+    section.appendChild(footer);
+    return section;
+  }
+
+  function renderMesaGrid() {
+    var mesa = getMesa(state.activeMesaId);
+    if (state.products.length === 0) {
+      mesaGrid.style.display = "block";
+      mesaGrid.innerHTML = '<div class="empty-state"><div class="glyph">🍽️</div><div>Todavía no tienes platos.<br>Agrégalos desde la pestaña Platos.</div></div>';
+      return;
+    }
+    mesaGrid.style.display = "";
+    mesaGrid.innerHTML = "";
+    state.products.forEach(function (p) {
+      var qty = mesa.order[p.id] || 0;
+      mesaGrid.appendChild(buildProductCard(p, qty, function (id) { addToMesa(mesa.id, id); }));
+    });
+  }
+
+  function renderMesas() {
+    var detail = mesaScreen === "detail";
+    mesasListView.hidden = detail;
+    mesaDetailView.hidden = !detail;
+    mesaBar.hidden = !detail;
+    if (detail) {
+      renderMesaBar();
+      renderMesaGrid();
+    } else {
+      renderMesaList();
+    }
+  }
+
+  /* ---------- Render: Pedido ---------- */
+  var orderContent = document.getElementById("orderContent");
+
+  /* Builds the counter/takeout cart (state.order). Used as the whole Pedido
+     tab in customer mode, and as one more section alongside the per-mesa
+     breakdown in staff mode. */
+  function buildCounterOrderSection(showHeading) {
+    var section = document.createElement("div");
+    section.className = "mesa-order-section";
+
+    if (showHeading) {
+      section.appendChild(el(
+        '<div class="mesa-order-heading">' +
+          '<span class="mesa-order-heading-name">Para llevar</span>' +
+          '<span class="mesa-order-heading-total">' + money(orderTotal()) + '</span>' +
+        '</div>'
+      ));
+    }
+
+    var ids = Object.keys(state.order).filter(function (id) { return findProduct(id); });
+    var list = document.createElement("div");
+    list.className = "order-list";
+
+    ids.forEach(function (id) {
+      var p = findProduct(id);
+      var qty = state.order[id];
+      var row = el(
+        '<div class="order-row" data-id="' + id + '">' +
+          '<div class="order-thumb ' + (p.photo ? "" : phClass(p.id)) + '">' +
+            (p.photo ? '<img src="' + p.photo + '" alt="">' : '<span>' + pickEmoji(p.name) + '</span>') +
+          '</div>' +
+          '<div class="order-info">' +
+            '<div class="name">' + esc(p.name) + '</div>' +
+            '<div class="unit">' + money(p.price) + ' c/u</div>' +
+          '</div>' +
+          '<div class="stepper">' +
+            '<button class="dec" aria-label="Quitar uno">−</button>' +
+            '<span class="qty">' + qty + '</span>' +
+            '<button class="inc" aria-label="Agregar uno">+</button>' +
+          '</div>' +
+          '<div class="order-subtotal">' + money(p.price * qty) + '</div>' +
+          '<button class="remove-btn" aria-label="Quitar del pedido">✕</button>' +
+        '</div>'
+      );
+      row.querySelector(".dec").addEventListener("click", function () { changeQty(id, -1); });
+      row.querySelector(".inc").addEventListener("click", function () { changeQty(id, 1); });
+      row.querySelector(".remove-btn").addEventListener("click", function () { removeFromOrder(id); });
+      list.appendChild(row);
+    });
+
+    var footer = el(
+      '<div class="order-footer">' +
+        (isCustomerMode ? '<input type="text" class="customer-name-input" id="customerName" placeholder="Tu nombre (opcional)">' : "") +
+        '<div class="total-block">' +
+          '<div class="label">Total del pedido</div>' +
+          '<div class="amount">' + money(orderTotal()) + '</div>' +
+        '</div>' +
+        '<div class="footer-actions">' +
+          '<button class="clear-btn">Vaciar pedido</button>' +
+          '<button class="confirm-btn">' + (isCustomerMode ? "Enviar pedido por WhatsApp" : "Confirmar pedido") + '</button>' +
+        '</div>' +
+      '</div>'
+    );
+    armConfirm(footer.querySelector(".clear-btn"), "¿Confirmar?", clearOrder);
+    footer.querySelector(".confirm-btn").addEventListener("click", isCustomerMode ? sendOrderWhatsApp : confirmOrder);
+
+    section.appendChild(list);
+    section.appendChild(footer);
+    return section;
+  }
+
+  function renderPedido() {
+    orderContent.innerHTML = "";
+
+    if (isCustomerMode) {
+      var custIds = Object.keys(state.order).filter(function (id) { return findProduct(id); });
+      if (custIds.length === 0) {
+        var custEmpty = el(
+          '<div class="empty-state">' +
+            '<div class="glyph">🧾</div>' +
+            '<div>Tu pedido está vacío.<br>Agrega platos desde el menú.</div>' +
+            '<button class="go-btn">Ir al menú</button>' +
+          '</div>'
+        );
+        custEmpty.querySelector(".go-btn").addEventListener("click", function () { switchTab("catalogo"); });
+        orderContent.appendChild(custEmpty);
+        return;
+      }
+      orderContent.appendChild(buildCounterOrderSection(false));
+      return;
+    }
+
+    /* Staff view: every table with an active order, plus the counter/takeout
+       cart if it has items — a running dashboard of everything pending. */
+    var occupiedMesas = state.tables.filter(function (t) { return mesaCount(t) > 0; });
+    var counterIds = Object.keys(state.order).filter(function (id) { return findProduct(id); });
+
+    if (occupiedMesas.length === 0 && counterIds.length === 0) {
+      var empty = el(
+        '<div class="empty-state">' +
+          '<div class="glyph">🧾</div>' +
+          '<div>No hay pedidos activos.<br>Agrega platos desde el Menú o abre una mesa.</div>' +
+          '<button class="go-btn">Ir a Mesas</button>' +
+        '</div>'
+      );
+      empty.querySelector(".go-btn").addEventListener("click", function () { mesaScreen = "list"; switchTab("mesas"); });
+      orderContent.appendChild(empty);
+      return;
+    }
+
+    occupiedMesas.forEach(function (mesa) {
+      orderContent.appendChild(buildMesaOrderSection(mesa, true));
+    });
+    if (counterIds.length > 0) {
+      orderContent.appendChild(buildCounterOrderSection(true));
+    }
+  }
+
+  /* ---------- Modal ---------- */
+  var overlay = document.getElementById("overlay");
+  var modalTitle = document.getElementById("modalTitle");
+  var fName = document.getElementById("fName");
+  var fPrice = document.getElementById("fPrice");
+  var fCost = document.getElementById("fCost");
+  var fMargin = document.getElementById("fMargin");
+  var fStock = document.getElementById("fStock");
+  var fPhoto = document.getElementById("fPhoto");
+  var fPhotoPreview = document.getElementById("fPhotoPreview");
+  var deleteBtn = document.getElementById("deleteBtn");
+
+  function marginFromCostPrice(cost, price) {
+    if (cost > 0) return Math.round(((price - cost) / cost) * 1000) / 10;
+    return 0;
+  }
+  function priceFromCostMargin(cost, margin) {
+    return Math.round(cost * (1 + margin / 100));
+  }
+
+  fCost.addEventListener("input", function () {
+    var cost = parseFloat(fCost.value) || 0;
+    var margin = parseFloat(fMargin.value);
+    if (!isNaN(margin) && cost > 0) {
+      fPrice.value = priceFromCostMargin(cost, margin);
+    }
+  });
+  fMargin.addEventListener("input", function () {
+    var cost = parseFloat(fCost.value) || 0;
+    var margin = parseFloat(fMargin.value);
+    if (!isNaN(margin) && cost > 0) {
+      fPrice.value = priceFromCostMargin(cost, margin);
+    }
+  });
+  fPrice.addEventListener("input", function () {
+    var cost = parseFloat(fCost.value) || 0;
+    var price = parseFloat(fPrice.value) || 0;
+    if (cost > 0) {
+      fMargin.value = marginFromCostPrice(cost, price);
+    }
+  });
+
+  function openModal(id) {
+    editingId = id;
+    modalPhotoData = null;
+    var p = id ? findProduct(id) : null;
+    modalTitle.textContent = p ? "Editar plato" : "Nuevo plato";
+    fName.value = p ? p.name : "";
+    fPrice.value = p ? p.price : "";
+    fCost.value = p ? p.cost : "";
+    fStock.value = p ? p.stock : 0;
+    fMargin.value = p && p.cost > 0 ? marginFromCostPrice(p.cost, p.price) : "";
+    deleteBtn.hidden = !p;
+    setPreview(p ? p.photo : null, p ? p.name : "");
+    overlay.hidden = false;
+    setTimeout(function () { fName.focus(); }, 0);
+  }
+
+  function setPreview(photo, name) {
+    if (photo) {
+      fPhotoPreview.innerHTML = '<img src="' + photo + '" alt="">';
+    } else {
+      fPhotoPreview.textContent = pickEmoji(name);
+    }
+  }
+
+  function closeModal() {
+    overlay.hidden = true;
+    editingId = null;
+    modalPhotoData = null;
+    fPhoto.value = "";
+    resetDeleteConfirm();
+  }
+
+  document.getElementById("cancelBtn").addEventListener("click", closeModal);
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeModal(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (!overlay.hidden) closeModal();
+    if (!receiptOverlay.hidden) closeReceipt();
+    if (!mesaTicketOverlay.hidden) closeMesaTicket();
+    if (!mesaNameOverlay.hidden) closeMesaNameModal();
+  });
+
+  function handlePhotoFile(file) {
+    if (!file || file.type.indexOf("image") !== 0) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      modalPhotoData = e.target.result;
+      setPreview(modalPhotoData, fName.value);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  document.getElementById("filePickBtn").addEventListener("click", function () { fPhoto.click(); });
+  fPhoto.addEventListener("change", function () {
+    var file = fPhoto.files && fPhoto.files[0];
+    if (file) handlePhotoFile(file);
+  });
+
+  var dropzone = document.getElementById("dropzone");
+  ["dragenter", "dragover"].forEach(function (evt) {
+    dropzone.addEventListener(evt, function (e) {
+      e.preventDefault(); e.stopPropagation();
+      dropzone.classList.add("drag-over");
+    });
+  });
+  ["dragleave", "drop"].forEach(function (evt) {
+    dropzone.addEventListener(evt, function (e) {
+      e.preventDefault(); e.stopPropagation();
+      dropzone.classList.remove("drag-over");
+    });
+  });
+  dropzone.addEventListener("drop", function (e) {
+    var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) handlePhotoFile(file);
+  });
+
+  document.addEventListener("paste", function (e) {
+    if (overlay.hidden) return;
+    var items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") === 0) {
+        var file = items[i].getAsFile();
+        if (file) { handlePhotoFile(file); e.preventDefault(); }
+        break;
+      }
+    }
+  });
+
+  fName.addEventListener("input", function () {
+    if (!modalPhotoData && !(editingId && findProduct(editingId) && findProduct(editingId).photo)) {
+      fPhotoPreview.textContent = pickEmoji(fName.value);
+    }
+  });
+
+  document.getElementById("saveBtn").addEventListener("click", function () {
+    var name = fName.value.trim();
+    var price = parseFloat(fPrice.value);
+    var cost = parseFloat(fCost.value) || 0;
+    var stock = parseFloat(fStock.value);
+    if (isNaN(stock) || stock < 0) stock = 0;
+    if (!name) { fName.focus(); return; }
+    if (isNaN(price) || price < 0) { fPrice.focus(); return; }
+    if (cost < 0) { fCost.focus(); return; }
+
+    if (editingId) {
+      var p = findProduct(editingId);
+      p.name = name;
+      p.price = price;
+      p.cost = cost;
+      p.stock = stock;
+      if (modalPhotoData) p.photo = modalPhotoData;
+    } else {
+      var id = "p" + Date.now() + Math.floor(Math.random() * 1000);
+      state.products.push({ id: id, name: name, price: price, cost: cost, stock: stock, photo: modalPhotoData });
+    }
+    saveState();
+    renderCatalogo();
+    if (activeTab === "inventario") renderInventario();
+    refreshSummary();
+    closeModal();
+  });
+
+  var resetDeleteConfirm = armConfirm(deleteBtn, "¿Confirmar?", function () {
+    if (!editingId) return;
+    state.products = state.products.filter(function (p) { return p.id !== editingId; });
+    delete state.order[editingId];
+    saveState();
+    renderCatalogo();
+    if (activeTab === "inventario") renderInventario();
+    refreshSummary();
+    closeModal();
+  });
+
+  /* ---------- Recibo ---------- */
+  var receiptOverlay = document.getElementById("receiptOverlay");
+  var receiptBody = document.getElementById("receiptBody");
+  var currentReceiptText = "";
+  var currentWaText = "";
+
+  function receiptToText(receipt, dateStr, timeStr) {
+    var lines = [];
+    lines.push(receipt.business.name);
+    if (receipt.business.address) lines.push(receipt.business.address);
+    if (receipt.business.phone) lines.push(receipt.business.phone);
+    lines.push("");
+    if (receipt.tableLabel) lines.push(receipt.tableLabel);
+    lines.push("Recibo N.º " + pad(receipt.number, 4));
+    lines.push(dateStr + " · " + timeStr);
+    lines.push("--------------------------------");
+    receipt.items.forEach(function (it) {
+      lines.push(it.name + "  (" + it.qty + " x " + money(it.price) + ")  " + money(it.subtotal));
+    });
+    lines.push("--------------------------------");
+    lines.push("TOTAL: " + money(receipt.total));
+    if (receipt.tableLabel) {
+      lines.push("Propina sugerida (10%): " + money(receipt.total * 0.1));
+      lines.push("Total con propina: " + money(receipt.total * 1.1));
+    }
+    lines.push("");
+    lines.push("¡Gracias por tu visita!");
+    return lines.join("\n");
+  }
+
+  function openReceipt(receipt) {
+    var dateStr = receipt.date.toLocaleDateString("es-CO", { day: "2-digit", month: "2-digit", year: "numeric" });
+    var timeStr = receipt.date.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+
+    var itemsHtml = receipt.items.map(function (it) {
+      return (
+        '<div class="receipt-item">' +
+          '<div class="receipt-item-main"><span>' + esc(it.name) + '</span><span class="ri-sub">' + money(it.subtotal) + '</span></div>' +
+          '<div class="ri-detail">' + it.qty + ' × ' + money(it.price) + '</div>' +
+        '</div>'
+      );
+    }).join("");
+
+    receiptBody.innerHTML =
+      '<div class="receipt-head">' +
+        '<div class="receipt-biz">' + esc(receipt.business.name) + '</div>' +
+        (receipt.business.address ? '<div class="receipt-meta">' + esc(receipt.business.address) + '</div>' : "") +
+        (receipt.business.phone ? '<div class="receipt-meta">' + esc(receipt.business.phone) + '</div>' : "") +
+        (receipt.tableLabel ? '<div class="receipt-meta">' + esc(receipt.tableLabel) + '</div>' : "") +
+      '</div>' +
+      '<div class="receipt-line receipt-sub"><span>Recibo N.º ' + pad(receipt.number, 4) + '</span><span>' + dateStr + ' · ' + timeStr + '</span></div>' +
+      '<div class="receipt-items">' + itemsHtml + '</div>' +
+      '<div class="receipt-line receipt-total"><span>Total</span><span>' + money(receipt.total) + '</span></div>' +
+      (receipt.tableLabel ?
+        '<div class="receipt-line receipt-sub"><span>Propina sugerida (10%)</span><span>' + money(receipt.total * 0.1) + '</span></div>' +
+        '<div class="receipt-line receipt-tip-total"><span>Total con propina</span><span>' + money(receipt.total * 1.1) + '</span></div>'
+      : "") +
+      '<div class="receipt-thanks">¡Gracias por tu visita!</div>';
+
+    currentReceiptText = receiptToText(receipt, dateStr, timeStr);
+    receiptOverlay.hidden = false;
+  }
+
+  function closeReceipt() { receiptOverlay.hidden = true; }
+
+  function legacyCopy(text) {
+    var ok = false;
+    try {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      ta.style.top = "0";
+      ta.style.left = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+    } catch (e) { ok = false; }
+    return ok;
+  }
+
+  function copyReceipt() {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(currentReceiptText).then(function () {
+        showToast("Recibo copiado ✓");
+      }).catch(function () {
+        showToast(legacyCopy(currentReceiptText) ? "Recibo copiado ✓" : "No se pudo copiar");
+      });
+    } else {
+      showToast(legacyCopy(currentReceiptText) ? "Recibo copiado ✓" : "No se pudo copiar");
+    }
+  }
+
+  document.getElementById("closeReceiptBtn").addEventListener("click", closeReceipt);
+  document.getElementById("copyReceiptBtn").addEventListener("click", copyReceipt);
+  document.getElementById("printReceiptBtn").addEventListener("click", function () {
+    if (window.AndroidPrint && window.AndroidPrint.print) { window.AndroidPrint.print(); }
+    else { window.print(); }
+  });
+  receiptOverlay.addEventListener("click", function (e) { if (e.target === receiptOverlay) closeReceipt(); });
+
+  /* ---------- Init ---------- */
+  renderCatalogo();
+  refreshSummary();
+})();
+</script>
