@@ -871,7 +871,14 @@
   @media (max-width: 480px) {
     .app { padding: 0 0.6rem 3rem; }
 
-    .tab-btn { padding: 0.5rem 0.9rem; font-size: 1rem; gap: 0.3rem; }
+    .tabs {
+      flex-wrap: wrap;
+      width: 100%;
+      border-radius: 16px;
+      justify-content: center;
+      overflow-x: visible;
+    }
+    .tab-btn { flex: 1 1 28%; padding: 0.7rem 0.5rem; font-size: 1.15rem; gap: 0.3rem; justify-content: center; }
     .stat-card { min-width: 0; padding: 0.8rem 0.9rem; }
     .stat-card .stat-value { font-size: 1.35rem; }
 
@@ -925,6 +932,22 @@
     .mesa-current-name { font-size: 1.35rem; }
     .mesa-back-btn { width: 2rem; height: 2rem; font-size: 1.05rem; }
     .mesa-ticket-btn { padding: 0.45rem 0.85rem; font-size: 0.95rem; }
+
+    /* Modales (editar plato, nombrar mesa, ticket, recibo, WhatsApp) */
+    .modal { padding: 1.3rem; gap: 1.1rem; }
+    .modal h2 { font-size: 1.35rem; }
+    .field label { font-size: 0.92rem; }
+    .field input[type="text"], .field input[type="number"] { font-size: 1.1rem; padding: 0.75rem 0.85rem; }
+    .photo-hint { font-size: 0.85rem; }
+    .file-btn { font-size: 0.95rem; padding: 0.6rem 0.9rem; }
+    .modal-actions { gap: 0.7rem; }
+    .btn-secondary, .btn-primary, .btn-danger { font-size: 1rem; padding: 0.75rem 1.2rem; }
+    .wa-hint, .print-hint { font-size: 1rem; }
+    .receipt-biz { font-size: 1.4rem; }
+    .receipt-meta, .receipt-line { font-size: 0.95rem; }
+    .receipt-total { font-size: 1.5rem; }
+    .receipt-item-main, .ri-detail { font-size: 0.95rem; }
+    .mesa-order-heading-name, .mesa-order-heading-total { font-size: 1.05rem; }
   }
 </style>
 <div class="app">
@@ -2498,31 +2521,4 @@
       ok = document.execCommand("copy");
       document.body.removeChild(ta);
     } catch (e) { ok = false; }
-    return ok;
-  }
-
-  function copyReceipt() {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(currentReceiptText).then(function () {
-        showToast("Recibo copiado ✓");
-      }).catch(function () {
-        showToast(legacyCopy(currentReceiptText) ? "Recibo copiado ✓" : "No se pudo copiar");
-      });
-    } else {
-      showToast(legacyCopy(currentReceiptText) ? "Recibo copiado ✓" : "No se pudo copiar");
-    }
-  }
-
-  document.getElementById("closeReceiptBtn").addEventListener("click", closeReceipt);
-  document.getElementById("copyReceiptBtn").addEventListener("click", copyReceipt);
-  document.getElementById("printReceiptBtn").addEventListener("click", function () {
-    if (window.AndroidPrint && window.AndroidPrint.print) { window.AndroidPrint.print(); }
-    else { window.print(); }
-  });
-  receiptOverlay.addEventListener("click", function (e) { if (e.target === receiptOverlay) closeReceipt(); });
-
-  /* ---------- Init ---------- */
-  renderCatalogo();
-  refreshSummary();
-})();
-</script>
+    retur
