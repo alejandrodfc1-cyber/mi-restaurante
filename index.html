@@ -195,19 +195,6 @@
     display: none !important;
   }
 
-  .summary-pill {
-    display: flex;
-    align-items: baseline;
-    gap: 0.45rem;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 0.65rem 1.2rem;
-    box-shadow: 0 1px 2px var(--shadow);
-    white-space: nowrap;
-  }
-  .summary-pill .n { font-size: 0.85rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
-  .summary-pill .v { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; color: var(--accent); font-variant-numeric: tabular-nums; }
 
   /* ---------- Tabs ---------- */
   .tabs {
@@ -402,6 +389,7 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     padding: 0.6rem 0.8rem;
+    cursor: pointer;
     animation: rise .3s ease both;
   }
 
@@ -456,6 +444,10 @@
     display: flex; align-items: center; justify-content: center;
   }
   .remove-btn:hover { color: var(--danger); background: var(--accent-soft); }
+  .remove-btn.confirming {
+    width: auto; border-radius: 999px; padding: 0 0.55rem;
+    background: var(--danger); color: #fff; font-size: 0.72rem; font-weight: 700;
+  }
 
   .order-footer {
     position: sticky;
@@ -797,6 +789,23 @@
   .photo-hint { font-size: 0.75rem; color: var(--ink-soft); line-height: 1.3; }
 
   .modal-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.3rem; }
+
+  .qty-edit-modal { align-items: center; text-align: center; }
+  .qty-edit-modal h2 { text-align: center; }
+  .qty-edit-row { display: flex; align-items: center; justify-content: center; gap: 1.2rem; }
+  .qty-edit-btn {
+    width: 3rem; height: 3rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    font-weight: 700;
+    font-size: 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qty-edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .qty-edit-value { min-width: 2.5rem; text-align: center; font-weight: 700; font-size: 2rem; font-variant-numeric: tabular-nums; }
+  .qty-edit-subtotal { font-family: var(--font-body); font-size: 1.4rem; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .qty-edit-modal .modal-actions { justify-content: center; width: 100%; }
   .btn-secondary { border: 1px solid var(--line); background: transparent; padding: 0.6rem 1.1rem; border-radius: var(--radius-sm); font-weight: 600; color: var(--ink-soft); }
   .btn-primary { border: none; background: var(--accent); color: var(--accent-ink); padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); font-weight: 700; }
   .wa-link { display: block; text-align: center; text-decoration: none; }
@@ -971,10 +980,6 @@
         </div>
       </div>
     </div>
-    <button class="summary-pill" id="summaryPill" aria-label="Ver pedido">
-      <span class="n" id="summaryCount">0 items</span>
-      <span class="v" id="summaryTotal">$0</span>
-    </button>
   </header>
 
   <nav class="tabs" role="tablist">
@@ -1116,6 +1121,21 @@
       <button type="button" class="btn-danger" id="removeMesaNameBtn" hidden>Quitar nombre</button>
       <button type="button" class="btn-secondary" id="cancelMesaNameBtn">Cancelar</button>
       <button type="button" class="btn-primary" id="saveMesaNameBtn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="qtyEditOverlay" hidden>
+  <div class="modal qty-edit-modal" role="dialog" aria-modal="true" aria-labelledby="qtyEditTitle">
+    <h2 id="qtyEditTitle">Plato</h2>
+    <div class="qty-edit-row">
+      <button type="button" class="qty-edit-btn" id="qtyEditDec" aria-label="Quitar uno">−</button>
+      <span class="qty-edit-value" id="qtyEditValue">1</span>
+      <button type="button" class="qty-edit-btn" id="qtyEditInc" aria-label="Agregar uno">+</button>
+    </div>
+    <div class="qty-edit-subtotal" id="qtyEditSubtotal">$0</div>
+    <div class="modal-actions">
+      <button type="button" class="btn-primary" id="qtyEditDoneBtn">Listo</button>
     </div>
   </div>
 </div>
@@ -1266,8 +1286,6 @@
     });
   });
 
-  document.getElementById("summaryPill").addEventListener("click", function () { switchTab("pedido"); });
-
   /* ---------- Tabs ---------- */
   var tabCatalogoBtn = document.getElementById("tabCatalogoBtn");
   var tabMesasBtn = document.getElementById("tabMesasBtn");
@@ -1355,8 +1373,6 @@
   }
 
   function refreshSummary() {
-    document.getElementById("summaryCount").textContent = orderCount() + (orderCount() === 1 ? " item" : " items");
-    document.getElementById("summaryTotal").textContent = money(orderTotal());
     document.getElementById("pedidoBadge").textContent = orderCount();
   }
 
@@ -2016,6 +2032,46 @@
     closeMesaNameModal();
   });
 
+  /* ---------- Editor de cantidad (fila de pedido) ---------- */
+  var qtyEditOverlay = document.getElementById("qtyEditOverlay");
+  var qtyEditTitle = document.getElementById("qtyEditTitle");
+  var qtyEditValue = document.getElementById("qtyEditValue");
+  var qtyEditSubtotal = document.getElementById("qtyEditSubtotal");
+  var currentQtyEditor = null;
+
+  function openQtyEditor(config) {
+    currentQtyEditor = config;
+    qtyEditTitle.textContent = config.name;
+    renderQtyEditorValue();
+    qtyEditOverlay.hidden = false;
+  }
+
+  function renderQtyEditorValue() {
+    if (!currentQtyEditor) return;
+    var qty = currentQtyEditor.getQty();
+    if (qty <= 0) { closeQtyEditor(); return; }
+    qtyEditValue.textContent = qty;
+    qtyEditSubtotal.textContent = money(qty * currentQtyEditor.unitPrice);
+  }
+
+  function closeQtyEditor() {
+    qtyEditOverlay.hidden = true;
+    currentQtyEditor = null;
+  }
+
+  document.getElementById("qtyEditInc").addEventListener("click", function () {
+    if (!currentQtyEditor) return;
+    currentQtyEditor.onInc();
+    renderQtyEditorValue();
+  });
+  document.getElementById("qtyEditDec").addEventListener("click", function () {
+    if (!currentQtyEditor) return;
+    currentQtyEditor.onDec();
+    renderQtyEditorValue();
+  });
+  document.getElementById("qtyEditDoneBtn").addEventListener("click", closeQtyEditor);
+  qtyEditOverlay.addEventListener("click", function (e) { if (e.target === qtyEditOverlay) closeQtyEditor(); });
+
   function buildAddMesaCard() {
     var card = el(
       '<div class="card mesa-card mesa-add-card" role="button" tabindex="0" aria-label="Agregar mesa">' +
@@ -2076,20 +2132,24 @@
           '</div>' +
           '<div class="order-info">' +
             '<div class="name">' + esc(p.name) + '</div>' +
-            '<div class="unit">' + money(p.price) + ' c/u</div>' +
-          '</div>' +
-          '<div class="stepper">' +
-            '<button class="dec" aria-label="Quitar uno">−</button>' +
-            '<span class="qty">' + qty + '</span>' +
-            '<button class="inc" aria-label="Agregar uno">+</button>' +
+            '<div class="unit">' + money(p.price) + ' c/u · ×' + qty + '</div>' +
           '</div>' +
           '<div class="order-subtotal">' + money(p.price * qty) + '</div>' +
           '<button class="remove-btn" aria-label="Quitar del pedido">✕</button>' +
         '</div>'
       );
-      row.querySelector(".dec").addEventListener("click", function () { changeMesaQty(mesa.id, id, -1); });
-      row.querySelector(".inc").addEventListener("click", function () { changeMesaQty(mesa.id, id, 1); });
-      row.querySelector(".remove-btn").addEventListener("click", function () { removeFromMesa(mesa.id, id); });
+      row.addEventListener("click", function () {
+        openQtyEditor({
+          name: p.name,
+          unitPrice: p.price,
+          getQty: function () { return mesa.order[id] || 0; },
+          onInc: function () { changeMesaQty(mesa.id, id, 1); },
+          onDec: function () { changeMesaQty(mesa.id, id, -1); }
+        });
+      });
+      var removeBtn = row.querySelector(".remove-btn");
+      removeBtn.addEventListener("click", function (e) { e.stopPropagation(); });
+      armConfirm(removeBtn, "¿Confirmar?", function () { removeFromMesa(mesa.id, id); });
       list.appendChild(row);
     });
 
@@ -2176,20 +2236,24 @@
           '</div>' +
           '<div class="order-info">' +
             '<div class="name">' + esc(p.name) + '</div>' +
-            '<div class="unit">' + money(p.price) + ' c/u</div>' +
-          '</div>' +
-          '<div class="stepper">' +
-            '<button class="dec" aria-label="Quitar uno">−</button>' +
-            '<span class="qty">' + qty + '</span>' +
-            '<button class="inc" aria-label="Agregar uno">+</button>' +
+            '<div class="unit">' + money(p.price) + ' c/u · ×' + qty + '</div>' +
           '</div>' +
           '<div class="order-subtotal">' + money(p.price * qty) + '</div>' +
           '<button class="remove-btn" aria-label="Quitar del pedido">✕</button>' +
         '</div>'
       );
-      row.querySelector(".dec").addEventListener("click", function () { changeQty(id, -1); });
-      row.querySelector(".inc").addEventListener("click", function () { changeQty(id, 1); });
-      row.querySelector(".remove-btn").addEventListener("click", function () { removeFromOrder(id); });
+      row.addEventListener("click", function () {
+        openQtyEditor({
+          name: p.name,
+          unitPrice: p.price,
+          getQty: function () { return state.order[id] || 0; },
+          onInc: function () { changeQty(id, 1); },
+          onDec: function () { changeQty(id, -1); }
+        });
+      });
+      var removeBtn = row.querySelector(".remove-btn");
+      removeBtn.addEventListener("click", function (e) { e.stopPropagation(); });
+      armConfirm(removeBtn, "¿Confirmar?", function () { removeFromOrder(id); });
       list.appendChild(row);
     });
 
@@ -2343,6 +2407,7 @@
     if (!receiptOverlay.hidden) closeReceipt();
     if (!mesaTicketOverlay.hidden) closeMesaTicket();
     if (!mesaNameOverlay.hidden) closeMesaNameModal();
+    if (!qtyEditOverlay.hidden) closeQtyEditor();
   });
 
   function handlePhotoFile(file) {
