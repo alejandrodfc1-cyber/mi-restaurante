@@ -181,6 +181,8 @@
   }
   .meta-field:hover, .meta-field:focus { background: var(--surface-2); }
   .meta-field:empty:before { content: attr(data-placeholder); opacity: 0.65; font-style: italic; }
+  #bizAddress, #bizPhone, #brandName { cursor: default; }
+  #bizAddress:hover, #bizPhone:hover { background: none; }
   .meta-sep { opacity: 0.5; }
 
   .brand-whatsapp { display: flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; color: var(--ink-soft); margin-top: 0.15rem; }
@@ -195,32 +197,20 @@
     display: none !important;
   }
 
-  .summary-pill {
-    display: flex;
-    align-items: baseline;
-    gap: 0.45rem;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 0.65rem 1.2rem;
-    box-shadow: 0 1px 2px var(--shadow);
-    white-space: nowrap;
-  }
-  .summary-pill .n { font-size: 0.85rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
-  .summary-pill .v { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; color: var(--accent); font-variant-numeric: tabular-nums; }
 
   /* ---------- Tabs ---------- */
   .tabs {
     display: flex;
     gap: 0.4rem;
     margin: 1.1rem 0 1.4rem;
-    background: var(--surface-2);
+    background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 0.3rem;
     width: fit-content;
     max-width: 100%;
     overflow-x: auto;
+    box-shadow: 0 2px 10px var(--shadow);
   }
   .tab-btn {
     border: none;
@@ -303,10 +293,12 @@
   /* Product cards only (not the Mesas grid): make the accumulated-quantity
      badge bigger and easier to spot at a glance. */
   .card:not(.mesa-card) .qty-badge {
-    min-width: 1.7rem;
-    height: 1.7rem;
-    font-size: 0.95rem;
-    padding: 0 0.4rem;
+    min-width: 1.45rem;
+    height: 1.45rem;
+    font-size: 0.8rem;
+    padding: 0 0.35rem;
+    background: var(--gold);
+    color: var(--accent-ink);
   }
 
   .card-tools {
@@ -335,7 +327,10 @@
   .icon-btn:hover { background: var(--accent); color: var(--accent-ink); }
 
   .card-body { padding: 0.8rem 0.9rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; flex: 1; }
-  .card-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; line-height: 1.25; }
+  .card-name {
+    font-family: var(--font-body); font-size: 1.1rem; font-weight: 500; line-height: 1.3;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
   .card-price { font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 700; font-size: 1.05rem; }
 
   .add-btn {
@@ -399,6 +394,7 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     padding: 0.6rem 0.8rem;
+    cursor: pointer;
     animation: rise .3s ease both;
   }
 
@@ -416,7 +412,10 @@
   .order-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
   .order-info { flex: 1; min-width: 0; }
-  .order-info .name { font-weight: 700; font-family: var(--font-display); font-size: 1rem; }
+  .order-info .name {
+    font-weight: 600; font-family: var(--font-body); font-size: 1.02rem; line-height: 1.3;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
   .order-info .unit { font-size: 0.8rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 
   .stepper { display: flex; align-items: center; gap: 0.4rem; flex: none; }
@@ -450,6 +449,10 @@
     display: flex; align-items: center; justify-content: center;
   }
   .remove-btn:hover { color: var(--danger); background: var(--accent-soft); }
+  .remove-btn.confirming {
+    width: auto; border-radius: 999px; padding: 0 0.55rem;
+    background: var(--danger); color: #fff; font-size: 0.72rem; font-weight: 700;
+  }
 
   .order-footer {
     position: sticky;
@@ -643,8 +646,11 @@
     align-items: center;
     gap: 0.7rem;
     flex-wrap: wrap;
-    padding: 0.6rem 0 0.9rem;
-    border-bottom: 1px solid var(--line);
+    padding: 0.7rem 0.9rem;
+    margin-bottom: 0.5rem;
+    background: var(--accent-soft);
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 8px var(--shadow);
   }
   .mesa-back-btn {
     flex: none;
@@ -667,7 +673,7 @@
   .mesa-ticket-btn {
     flex: none;
     margin-left: auto;
-    border: 1px solid var(--line);
+    border: none;
     background: var(--surface);
     border-radius: 999px;
     padding: 0.6rem 1.15rem;
@@ -678,7 +684,7 @@
     display: flex;
     align-items: center;
     gap: 0.45rem;
-    box-shadow: 0 1px 2px var(--shadow);
+    box-shadow: 0 3px 10px var(--shadow);
   }
   .mesa-ticket-btn:hover { border-color: var(--accent); color: var(--accent); }
   .mesa-ticket-btn .ticket-icon { font-size: 1.25rem; }
@@ -791,6 +797,23 @@
   .photo-hint { font-size: 0.75rem; color: var(--ink-soft); line-height: 1.3; }
 
   .modal-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.3rem; }
+
+  .qty-edit-modal { align-items: center; text-align: center; }
+  .qty-edit-modal h2 { text-align: center; }
+  .qty-edit-row { display: flex; align-items: center; justify-content: center; gap: 1.2rem; }
+  .qty-edit-btn {
+    width: 3rem; height: 3rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    font-weight: 700;
+    font-size: 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qty-edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .qty-edit-value { min-width: 2.5rem; text-align: center; font-weight: 700; font-size: 2rem; font-variant-numeric: tabular-nums; }
+  .qty-edit-subtotal { font-family: var(--font-body); font-size: 1.4rem; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .qty-edit-modal .modal-actions { justify-content: center; width: 100%; }
   .btn-secondary { border: 1px solid var(--line); background: transparent; padding: 0.6rem 1.1rem; border-radius: var(--radius-sm); font-weight: 600; color: var(--ink-soft); }
   .btn-primary { border: none; background: var(--accent); color: var(--accent-ink); padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); font-weight: 700; }
   .wa-link { display: block; text-align: center; text-decoration: none; }
@@ -887,7 +910,7 @@
 
     .card-body { padding: 0.5rem 0.55rem 0.6rem; gap: 0.25rem; }
     .card-name {
-      font-size: 0.9rem; line-height: 1.25; font-weight: 700;
+      font-size: 0.88rem; line-height: 1.3; font-weight: 500;
       white-space: normal; word-break: break-word;
     }
     .card-price { font-size: 0.8rem; }
@@ -902,10 +925,7 @@
     .order-row { padding: 0.5rem 0.55rem; gap: 0.4rem; border-radius: 12px; }
     .order-thumb { width: 38px; height: 38px; border-radius: 10px; font-size: 1.1rem; }
     .order-info { overflow: hidden; }
-    .order-info .name {
-      font-size: 1rem; line-height: 1.25;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
+    .order-info .name { font-size: 0.95rem; line-height: 1.25; }
     .order-info .unit { font-size: 0.82rem; }
     .stepper { gap: 0.3rem; }
     .stepper button { width: 28px; height: 28px; font-size: 0.95rem; }
@@ -955,12 +975,12 @@
         </svg>
       </div>
       <div class="brand-text">
-        <span class="brand-name" id="brandName" contenteditable="true" spellcheck="false" role="textbox" aria-label="Nombre del restaurante">Mi Restaurante</span>
+        <span class="brand-name" id="brandName">Mi Restaurante</span>
         <span class="brand-tag">Menú y pedidos</span>
         <div class="brand-meta">
-          <span class="meta-field" id="bizAddress" contenteditable="true" spellcheck="false" data-placeholder="Agregar dirección" role="textbox" aria-label="Dirección del restaurante"></span>
+          <span class="meta-field" id="bizAddress"></span>
           <span class="meta-sep">·</span>
-          <span class="meta-field" id="bizPhone" contenteditable="true" spellcheck="false" data-placeholder="Agregar teléfono" role="textbox" aria-label="Teléfono del restaurante"></span>
+          <span class="meta-field" id="bizPhone"></span>
         </div>
         <div class="brand-whatsapp" id="whatsappRow">
           <span class="wa-label">WhatsApp para pedidos:</span>
@@ -968,10 +988,6 @@
         </div>
       </div>
     </div>
-    <button class="summary-pill" id="summaryPill" aria-label="Ver pedido">
-      <span class="n" id="summaryCount">0 items</span>
-      <span class="v" id="summaryTotal">$0</span>
-    </button>
   </header>
 
   <nav class="tabs" role="tablist">
@@ -1117,6 +1133,21 @@
   </div>
 </div>
 
+<div class="overlay" id="qtyEditOverlay" hidden>
+  <div class="modal qty-edit-modal" role="dialog" aria-modal="true" aria-labelledby="qtyEditTitle">
+    <h2 id="qtyEditTitle">Plato</h2>
+    <div class="qty-edit-row">
+      <button type="button" class="qty-edit-btn" id="qtyEditDec" aria-label="Quitar uno">−</button>
+      <span class="qty-edit-value" id="qtyEditValue">1</span>
+      <button type="button" class="qty-edit-btn" id="qtyEditInc" aria-label="Agregar uno">+</button>
+    </div>
+    <div class="qty-edit-subtotal" id="qtyEditSubtotal">$0</div>
+    <div class="modal-actions">
+      <button type="button" class="btn-primary" id="qtyEditDoneBtn">Listo</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -1125,6 +1156,16 @@
 
   var isCustomerMode = new URLSearchParams(location.search).get("cliente") === "1";
   if (isCustomerMode) document.documentElement.classList.add("customer-mode");
+
+  /* ============================================================
+     DATOS FIJOS DEL NEGOCIO — edita solo estas 3 líneas para
+     cambiar el nombre, dirección y teléfono. El usuario NO puede
+     cambiarlos desde la app; solo se editan aquí, en el código.
+     ============================================================ */
+  var BUSINESS_NAME = "La Españita";
+  var BUSINESS_ADDRESS = "Av. Francia 512 - Valparaiso";
+  var BUSINESS_PHONE = "+ 056-";
+  /* ============================================================ */
 
   var STORAGE_KEY = "mostrador-restaurante-v1";
 
@@ -1231,39 +1272,24 @@
   var bizAddressEl = document.getElementById("bizAddress");
   var bizPhoneEl = document.getElementById("bizPhone");
   var bizWhatsappEl = document.getElementById("bizWhatsapp");
+
+  /* Nombre, dirección y teléfono son fijos (ver BUSINESS_NAME /
+     BUSINESS_ADDRESS / BUSINESS_PHONE arriba) — no editables desde la app. */
+  state.shopName = BUSINESS_NAME;
+  state.address = BUSINESS_ADDRESS;
+  state.phone = BUSINESS_PHONE;
   brandNameEl.textContent = state.shopName;
   bizAddressEl.textContent = state.address;
   bizPhoneEl.textContent = state.phone;
   bizWhatsappEl.textContent = state.whatsapp;
-  if (isCustomerMode) {
-    brandNameEl.setAttribute("contenteditable", "false");
-    bizAddressEl.setAttribute("contenteditable", "false");
-    bizPhoneEl.setAttribute("contenteditable", "false");
-  }
-  brandNameEl.addEventListener("blur", function () {
-    state.shopName = brandNameEl.textContent.trim() || "Mi Restaurante";
-    brandNameEl.textContent = state.shopName;
-    saveState();
-  });
-  bizAddressEl.addEventListener("blur", function () {
-    state.address = bizAddressEl.textContent.trim();
-    saveState();
-  });
-  bizPhoneEl.addEventListener("blur", function () {
-    state.phone = bizPhoneEl.textContent.trim();
-    saveState();
-  });
+
   bizWhatsappEl.addEventListener("blur", function () {
     state.whatsapp = bizWhatsappEl.textContent.trim();
     saveState();
   });
-  [brandNameEl, bizAddressEl, bizPhoneEl, bizWhatsappEl].forEach(function (elx) {
-    elx.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") { e.preventDefault(); elx.blur(); }
-    });
+  bizWhatsappEl.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); bizWhatsappEl.blur(); }
   });
-
-  document.getElementById("summaryPill").addEventListener("click", function () { switchTab("pedido"); });
 
   /* ---------- Tabs ---------- */
   var tabCatalogoBtn = document.getElementById("tabCatalogoBtn");
@@ -1352,8 +1378,6 @@
   }
 
   function refreshSummary() {
-    document.getElementById("summaryCount").textContent = orderCount() + (orderCount() === 1 ? " item" : " items");
-    document.getElementById("summaryTotal").textContent = money(orderTotal());
     document.getElementById("pedidoBadge").textContent = orderCount();
   }
 
@@ -2013,6 +2037,46 @@
     closeMesaNameModal();
   });
 
+  /* ---------- Editor de cantidad (fila de pedido) ---------- */
+  var qtyEditOverlay = document.getElementById("qtyEditOverlay");
+  var qtyEditTitle = document.getElementById("qtyEditTitle");
+  var qtyEditValue = document.getElementById("qtyEditValue");
+  var qtyEditSubtotal = document.getElementById("qtyEditSubtotal");
+  var currentQtyEditor = null;
+
+  function openQtyEditor(config) {
+    currentQtyEditor = config;
+    qtyEditTitle.textContent = config.name;
+    renderQtyEditorValue();
+    qtyEditOverlay.hidden = false;
+  }
+
+  function renderQtyEditorValue() {
+    if (!currentQtyEditor) return;
+    var qty = currentQtyEditor.getQty();
+    if (qty <= 0) { closeQtyEditor(); return; }
+    qtyEditValue.textContent = qty;
+    qtyEditSubtotal.textContent = money(qty * currentQtyEditor.unitPrice);
+  }
+
+  function closeQtyEditor() {
+    qtyEditOverlay.hidden = true;
+    currentQtyEditor = null;
+  }
+
+  document.getElementById("qtyEditInc").addEventListener("click", function () {
+    if (!currentQtyEditor) return;
+    currentQtyEditor.onInc();
+    renderQtyEditorValue();
+  });
+  document.getElementById("qtyEditDec").addEventListener("click", function () {
+    if (!currentQtyEditor) return;
+    currentQtyEditor.onDec();
+    renderQtyEditorValue();
+  });
+  document.getElementById("qtyEditDoneBtn").addEventListener("click", closeQtyEditor);
+  qtyEditOverlay.addEventListener("click", function (e) { if (e.target === qtyEditOverlay) closeQtyEditor(); });
+
   function buildAddMesaCard() {
     var card = el(
       '<div class="card mesa-card mesa-add-card" role="button" tabindex="0" aria-label="Agregar mesa">' +
@@ -2073,20 +2137,24 @@
           '</div>' +
           '<div class="order-info">' +
             '<div class="name">' + esc(p.name) + '</div>' +
-            '<div class="unit">' + money(p.price) + ' c/u</div>' +
-          '</div>' +
-          '<div class="stepper">' +
-            '<button class="dec" aria-label="Quitar uno">−</button>' +
-            '<span class="qty">' + qty + '</span>' +
-            '<button class="inc" aria-label="Agregar uno">+</button>' +
+            '<div class="unit">' + money(p.price) + ' c/u · ×' + qty + '</div>' +
           '</div>' +
           '<div class="order-subtotal">' + money(p.price * qty) + '</div>' +
           '<button class="remove-btn" aria-label="Quitar del pedido">✕</button>' +
         '</div>'
       );
-      row.querySelector(".dec").addEventListener("click", function () { changeMesaQty(mesa.id, id, -1); });
-      row.querySelector(".inc").addEventListener("click", function () { changeMesaQty(mesa.id, id, 1); });
-      row.querySelector(".remove-btn").addEventListener("click", function () { removeFromMesa(mesa.id, id); });
+      row.addEventListener("click", function () {
+        openQtyEditor({
+          name: p.name,
+          unitPrice: p.price,
+          getQty: function () { return mesa.order[id] || 0; },
+          onInc: function () { changeMesaQty(mesa.id, id, 1); },
+          onDec: function () { changeMesaQty(mesa.id, id, -1); }
+        });
+      });
+      var removeBtn = row.querySelector(".remove-btn");
+      removeBtn.addEventListener("click", function (e) { e.stopPropagation(); });
+      armConfirm(removeBtn, "¿Confirmar?", function () { removeFromMesa(mesa.id, id); });
       list.appendChild(row);
     });
 
@@ -2173,20 +2241,24 @@
           '</div>' +
           '<div class="order-info">' +
             '<div class="name">' + esc(p.name) + '</div>' +
-            '<div class="unit">' + money(p.price) + ' c/u</div>' +
-          '</div>' +
-          '<div class="stepper">' +
-            '<button class="dec" aria-label="Quitar uno">−</button>' +
-            '<span class="qty">' + qty + '</span>' +
-            '<button class="inc" aria-label="Agregar uno">+</button>' +
+            '<div class="unit">' + money(p.price) + ' c/u · ×' + qty + '</div>' +
           '</div>' +
           '<div class="order-subtotal">' + money(p.price * qty) + '</div>' +
           '<button class="remove-btn" aria-label="Quitar del pedido">✕</button>' +
         '</div>'
       );
-      row.querySelector(".dec").addEventListener("click", function () { changeQty(id, -1); });
-      row.querySelector(".inc").addEventListener("click", function () { changeQty(id, 1); });
-      row.querySelector(".remove-btn").addEventListener("click", function () { removeFromOrder(id); });
+      row.addEventListener("click", function () {
+        openQtyEditor({
+          name: p.name,
+          unitPrice: p.price,
+          getQty: function () { return state.order[id] || 0; },
+          onInc: function () { changeQty(id, 1); },
+          onDec: function () { changeQty(id, -1); }
+        });
+      });
+      var removeBtn = row.querySelector(".remove-btn");
+      removeBtn.addEventListener("click", function (e) { e.stopPropagation(); });
+      armConfirm(removeBtn, "¿Confirmar?", function () { removeFromOrder(id); });
       list.appendChild(row);
     });
 
@@ -2340,6 +2412,7 @@
     if (!receiptOverlay.hidden) closeReceipt();
     if (!mesaTicketOverlay.hidden) closeMesaTicket();
     if (!mesaNameOverlay.hidden) closeMesaNameModal();
+    if (!qtyEditOverlay.hidden) closeQtyEditor();
   });
 
   function handlePhotoFile(file) {
