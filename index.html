@@ -543,7 +543,10 @@
     box-shadow: 0 1px 2px var(--shadow);
   }
   .stat-card .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); }
-  .stat-card .stat-value { font-family: var(--font-body); font-size: 1.65rem; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; margin-top: 0.15rem; }
+  .stat-card .stat-value {
+    font-family: var(--font-body); font-size: 1.35rem; font-weight: 700; color: var(--gold);
+    font-variant-numeric: tabular-nums; margin-top: 0.15rem; overflow-wrap: break-word;
+  }
   .stat-card .stat-sub { font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.15rem; }
 
   .sales-section-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin: 0 0 0.7rem; }
@@ -896,7 +899,7 @@
 
     .tab-btn { padding: 0.42rem 0.5rem; font-size: 0.85rem; gap: 0.2rem; }
     .stat-card { min-width: 0; padding: 0.8rem 0.9rem; }
-    .stat-card .stat-value { font-size: 1.35rem; }
+    .stat-card .stat-value { font-size: 1.1rem; }
 
     .grid { gap: 0.5rem; }
 
@@ -982,10 +985,14 @@
           <span class="meta-sep">·</span>
           <span class="meta-field" id="bizPhone"></span>
         </div>
+        <!-- Fila de WhatsApp desactivada temporalmente (pendiente de implementar).
+             Para reactivarla, descomenta este bloque y el bloque JS marcado
+             igual más abajo ("WhatsApp header field").
         <div class="brand-whatsapp" id="whatsappRow">
           <span class="wa-label">WhatsApp para pedidos:</span>
           <span class="meta-field" id="bizWhatsapp" contenteditable="true" spellcheck="false" data-placeholder="+57 300 123 4567" role="textbox" aria-label="Número de WhatsApp para recibir pedidos"></span>
         </div>
+        -->
       </div>
     </div>
   </header>
@@ -1228,7 +1235,7 @@
   }
 
   function money(n) {
-    return "$" + Math.round(n).toLocaleString("es-CO");
+    return "$" + Math.round(n).toLocaleString("es-CO", { maximumFractionDigits: 0 });
   }
 
   function pickEmoji(name) {
@@ -1271,7 +1278,6 @@
   var brandNameEl = document.getElementById("brandName");
   var bizAddressEl = document.getElementById("bizAddress");
   var bizPhoneEl = document.getElementById("bizPhone");
-  var bizWhatsappEl = document.getElementById("bizWhatsapp");
 
   /* Nombre, dirección y teléfono son fijos (ver BUSINESS_NAME /
      BUSINESS_ADDRESS / BUSINESS_PHONE arriba) — no editables desde la app. */
@@ -1281,8 +1287,12 @@
   brandNameEl.textContent = state.shopName;
   bizAddressEl.textContent = state.address;
   bizPhoneEl.textContent = state.phone;
-  bizWhatsappEl.textContent = state.whatsapp;
 
+  /* WhatsApp header field — desactivado temporalmente junto con su HTML
+     (ver el comentario "whatsappRow" arriba en el <header>). Descomenta
+     ambos bloques para reactivarlo.
+  var bizWhatsappEl = document.getElementById("bizWhatsapp");
+  bizWhatsappEl.textContent = state.whatsapp;
   bizWhatsappEl.addEventListener("blur", function () {
     state.whatsapp = bizWhatsappEl.textContent.trim();
     saveState();
@@ -1290,6 +1300,7 @@
   bizWhatsappEl.addEventListener("keydown", function (e) {
     if (e.key === "Enter") { e.preventDefault(); bizWhatsappEl.blur(); }
   });
+  */
 
   /* ---------- Tabs ---------- */
   var tabCatalogoBtn = document.getElementById("tabCatalogoBtn");
