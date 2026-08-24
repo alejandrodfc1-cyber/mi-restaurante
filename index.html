@@ -550,6 +550,9 @@
   .stat-card .stat-sub { font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.15rem; }
 
   .sales-section-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin: 0 0 0.7rem; }
+  .sales-section-header { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; }
+  .sales-section-header .sales-section-title { margin: 0 0 0.7rem; }
+  .export-data-btn { font-size: 0.82rem; padding: 0.45rem 0.85rem; margin-bottom: 0.5rem; }
 
   .sale-row {
     display: flex;
@@ -1634,6 +1637,30 @@
       .sort(function (a, b) { return b.date - a.date; });
   }
 
+  function exportData() {
+    var payload = {
+      exportedAt: new Date().toISOString(),
+      shopName: state.shopName,
+      sales: state.sales,
+      products: state.products,
+      tables: state.tables,
+      receiptSeq: state.receiptSeq
+    };
+    var json = JSON.stringify(payload, null, 2);
+    var blob = new Blob([json], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var dateStr = new Date().toISOString().slice(0, 10);
+    var safeName = (state.shopName || "restaurante").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "respaldo-" + safeName + "-" + dateStr + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast("Datos exportados ✓");
+  }
+
   function renderVentas() {
     var now = new Date();
     var yesterday = new Date(now);
@@ -1665,18 +1692,23 @@
           '<div class="stat-sub">' + monthSales.length + (monthSales.length === 1 ? " pedido" : " pedidos") + '</div>' +
         '</div>' +
       '</div>' +
-      '<h2 class="sales-section-title">Historial de ventas</h2>';
+      '<div class="sales-section-header">' +
+        '<h2 class="sales-section-title">Historial de ventas</h2>' +
+        '<button type="button" class="btn-secondary export-data-btn" id="exportDataBtn">⬇ Exportar datos</button>' +
+      '</div>';
 
     var dayGroups = groupSalesByDay(state.sales);
 
     if (dayGroups.length === 0) {
       html += '<div class="empty-state"><div class="glyph">📋</div><div>Todavía no has confirmado ningún pedido.</div></div>';
       ventasContent.innerHTML = html;
+      document.getElementById("exportDataBtn").addEventListener("click", exportData);
       return;
     }
 
     html += '<div id="historyList"></div>';
     ventasContent.innerHTML = html;
+    document.getElementById("exportDataBtn").addEventListener("click", exportData);
 
     var historyList = document.getElementById("historyList");
     dayGroups.forEach(function (group, idx) {
