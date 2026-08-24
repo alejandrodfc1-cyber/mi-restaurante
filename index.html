@@ -192,6 +192,7 @@
   .customer-mode #tabVentasBtn,
   .customer-mode #tabInventarioBtn,
   .customer-mode #tabMesasBtn,
+  .customer-mode #tabRespaldoBtn,
   .customer-mode #whatsappRow,
   .customer-mode .card-tools {
     display: none !important;
@@ -561,6 +562,26 @@
   }
   .archived-summary strong { color: var(--gold); }
   .archived-summary-date { font-size: 0.75rem; }
+
+  /* ---------- Respaldo ---------- */
+  .respaldo-intro { font-size: 0.88rem; color: var(--ink-soft); margin: 0 0 1.1rem; max-width: 46rem; }
+  .respaldo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.9rem; }
+  .respaldo-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: 1.1rem 1.15rem; box-shadow: 0 1px 2px var(--shadow);
+    display: flex; flex-direction: column; gap: 0.55rem;
+  }
+  .respaldo-card-icon {
+    width: 2.4rem; height: 2.4rem; border-radius: var(--radius-sm);
+    background: var(--surface-2); display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; flex: none;
+  }
+  .respaldo-card h3 { font-family: var(--font-display); font-size: 1rem; font-weight: 700; margin: 0; }
+  .respaldo-card p { font-size: 0.83rem; color: var(--ink-soft); line-height: 1.4; margin: 0; flex: 1; }
+  .respaldo-card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.15rem; }
+  .respaldo-card-actions .btn-secondary { font-size: 0.85rem; padding: 0.5rem 0.9rem; flex: 1; min-width: max-content; }
+  .respaldo-card.warn { border-color: var(--accent); }
+  .respaldo-card.warn .respaldo-card-icon { background: color-mix(in srgb, var(--accent) 16%, var(--surface-2)); }
 
   .sale-row {
     display: flex;
@@ -1014,6 +1035,7 @@
     <button class="tab-btn" id="tabPedidoBtn" role="tab" aria-selected="false">Pedido <span class="badge" id="pedidoBadge">0</span></button>
     <button class="tab-btn" id="tabVentasBtn" role="tab" aria-selected="false">Ventas</button>
     <button class="tab-btn" id="tabInventarioBtn" role="tab" aria-selected="false">Platos</button>
+    <button class="tab-btn" id="tabRespaldoBtn" role="tab" aria-selected="false">💾 Respaldo</button>
   </nav>
 
   <div class="mesa-bar" id="mesaBar" hidden>
@@ -1052,6 +1074,10 @@
 
   <section id="viewInventario" hidden>
     <div id="inventarioContent"></div>
+  </section>
+
+  <section id="viewRespaldo" hidden>
+    <div id="respaldoContent"></div>
   </section>
 </div>
 
@@ -1375,11 +1401,13 @@
   var tabPedidoBtn = document.getElementById("tabPedidoBtn");
   var tabVentasBtn = document.getElementById("tabVentasBtn");
   var tabInventarioBtn = document.getElementById("tabInventarioBtn");
+  var tabRespaldoBtn = document.getElementById("tabRespaldoBtn");
   var viewCatalogo = document.getElementById("viewCatalogo");
   var viewMesas = document.getElementById("viewMesas");
   var viewPedido = document.getElementById("viewPedido");
   var viewVentas = document.getElementById("viewVentas");
   var viewInventario = document.getElementById("viewInventario");
+  var viewRespaldo = document.getElementById("viewRespaldo");
 
   function switchTab(tab) {
     activeTab = tab;
@@ -1388,11 +1416,13 @@
     var isPedido = tab === "pedido";
     var isVentas = tab === "ventas";
     var isInventario = tab === "inventario";
+    var isRespaldo = tab === "respaldo";
     viewCatalogo.hidden = !isCat;
     viewMesas.hidden = !isMesas;
     viewPedido.hidden = !isPedido;
     viewVentas.hidden = !isVentas;
     viewInventario.hidden = !isInventario;
+    viewRespaldo.hidden = !isRespaldo;
     if (!isMesas) mesaBar.hidden = true;
     tabCatalogoBtn.classList.toggle("active", isCat);
     tabCatalogoBtn.setAttribute("aria-selected", isCat);
@@ -1404,17 +1434,21 @@
     tabVentasBtn.setAttribute("aria-selected", isVentas);
     tabInventarioBtn.classList.toggle("active", isInventario);
     tabInventarioBtn.setAttribute("aria-selected", isInventario);
+    tabRespaldoBtn.classList.toggle("active", isRespaldo);
+    tabRespaldoBtn.setAttribute("aria-selected", isRespaldo);
     if (isCat) renderCatalogo();
     if (isMesas) renderMesas();
     if (isPedido) renderPedido();
     if (isVentas) renderVentas();
     if (isInventario) renderInventario();
+    if (isRespaldo) renderRespaldo();
   }
   tabCatalogoBtn.addEventListener("click", function () { switchTab("catalogo"); });
   tabMesasBtn.addEventListener("click", function () { mesaScreen = "list"; switchTab("mesas"); });
   tabPedidoBtn.addEventListener("click", function () { switchTab("pedido"); });
   tabInventarioBtn.addEventListener("click", function () { switchTab("inventario"); });
   tabVentasBtn.addEventListener("click", function () { switchTab("ventas"); });
+  tabRespaldoBtn.addEventListener("click", function () { switchTab("respaldo"); });
 
   /* ---------- Toast ---------- */
   function showToast(msg) {
@@ -1922,12 +1956,6 @@
       : "") +
       '<div class="sales-section-header">' +
         '<h2 class="sales-section-title">Historial de ventas</h2>' +
-        '<div class="sales-section-actions">' +
-          '<button type="button" class="btn-secondary export-data-btn" id="exportDataBtn">⬇ Exportar datos</button>' +
-          '<button type="button" class="btn-secondary export-data-btn" id="exportCsvBtn">📊 Exportar resumen Excel</button>' +
-          '<button type="button" class="btn-secondary export-data-btn" id="importDataBtn">⬆ Importar datos</button>' +
-          '<button type="button" class="btn-secondary export-data-btn" id="openArchiveBtn">📦 Limpiar historial antiguo</button>' +
-        '</div>' +
       '</div>';
 
     var dayGroups = groupSalesByDay(state.sales);
@@ -1935,19 +1963,11 @@
     if (dayGroups.length === 0) {
       html += '<div class="empty-state"><div class="glyph">📋</div><div>Todavía no has confirmado ningún pedido.</div></div>';
       ventasContent.innerHTML = html;
-      document.getElementById("exportDataBtn").addEventListener("click", exportData);
-      document.getElementById("exportCsvBtn").addEventListener("click", exportDailySummaryCSV);
-      document.getElementById("importDataBtn").addEventListener("click", function () { importFileInput.click(); });
-      document.getElementById("openArchiveBtn").addEventListener("click", openArchiveModal);
       return;
     }
 
     html += '<div id="historyList"></div>';
     ventasContent.innerHTML = html;
-    document.getElementById("exportDataBtn").addEventListener("click", exportData);
-    document.getElementById("exportCsvBtn").addEventListener("click", exportDailySummaryCSV);
-    document.getElementById("importDataBtn").addEventListener("click", function () { importFileInput.click(); });
-    document.getElementById("openArchiveBtn").addEventListener("click", openArchiveModal);
 
     var historyList = document.getElementById("historyList");
     dayGroups.forEach(function (group, idx) {
@@ -1981,6 +2001,53 @@
 
       historyList.appendChild(groupEl);
     });
+  }
+
+  /* ---------- Render: Respaldo ---------- */
+  var respaldoContent = document.getElementById("respaldoContent");
+
+  function renderRespaldo() {
+    var html =
+      '<p class="respaldo-intro">Copias de seguridad de tu información. Guarda el respaldo fuera del teléfono (correo, Drive, WhatsApp) para no perderlo si el celular se pierde o se daña.</p>' +
+      '<div class="respaldo-grid">' +
+        '<div class="respaldo-card">' +
+          '<div class="respaldo-card-icon">⬇</div>' +
+          '<h3>Exportar datos</h3>' +
+          '<p>Descarga un respaldo completo (ventas, platos, mesas) en un archivo. Úsalo para restaurar todo en otro teléfono.</p>' +
+          '<div class="respaldo-card-actions">' +
+            '<button type="button" class="btn-secondary" id="exportDataBtn">Exportar datos</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="respaldo-card">' +
+          '<div class="respaldo-card-icon">📊</div>' +
+          '<h3>Resumen en Excel</h3>' +
+          '<p>Descarga un archivo .csv con el total de ventas, cantidad de pedidos y productos vendidos por día. Se abre en Excel o Google Sheets.</p>' +
+          '<div class="respaldo-card-actions">' +
+            '<button type="button" class="btn-secondary" id="exportCsvBtn">Exportar resumen Excel</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="respaldo-card">' +
+          '<div class="respaldo-card-icon">⬆</div>' +
+          '<h3>Importar / restaurar</h3>' +
+          '<p>Recupera un respaldo exportado antes. Reemplaza los datos de este teléfono por los del archivo — útil si perdiste el celular.</p>' +
+          '<div class="respaldo-card-actions">' +
+            '<button type="button" class="btn-secondary" id="importDataBtn">Importar datos</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="respaldo-card warn">' +
+          '<div class="respaldo-card-icon">📦</div>' +
+          '<h3>Limpiar historial antiguo</h3>' +
+          '<p>Descarga y archiva las ventas más viejas para aligerar la app. Quedan resumidas en un total acumulado, no se pierden.</p>' +
+          '<div class="respaldo-card-actions">' +
+            '<button type="button" class="btn-secondary" id="openArchiveBtn">Limpiar historial antiguo</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    respaldoContent.innerHTML = html;
+    document.getElementById("exportDataBtn").addEventListener("click", exportData);
+    document.getElementById("exportCsvBtn").addEventListener("click", exportDailySummaryCSV);
+    document.getElementById("importDataBtn").addEventListener("click", function () { importFileInput.click(); });
+    document.getElementById("openArchiveBtn").addEventListener("click", openArchiveModal);
   }
 
   /* ---------- Render: Platos (admin) ---------- */
