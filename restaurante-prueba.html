@@ -192,6 +192,7 @@
   .customer-mode #tabVentasBtn,
   .customer-mode #tabInventarioBtn,
   .customer-mode #tabMesasBtn,
+  .customer-mode #tabRespaldoBtn,
   .customer-mode #whatsappRow,
   .customer-mode .card-tools {
     display: none !important;
@@ -552,7 +553,35 @@
   .sales-section-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin: 0 0 0.7rem; }
   .sales-section-header { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; }
   .sales-section-header .sales-section-title { margin: 0 0 0.7rem; }
-  .export-data-btn { font-size: 0.82rem; padding: 0.45rem 0.85rem; margin-bottom: 0.5rem; }
+  .sales-section-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+  .export-data-btn { font-size: 0.82rem; padding: 0.45rem 0.85rem; }
+  .archived-summary {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap;
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-md);
+    padding: 0.6rem 0.9rem; margin-bottom: 1rem; font-size: 0.85rem; color: var(--ink-soft);
+  }
+  .archived-summary strong { color: var(--gold); }
+  .archived-summary-date { font-size: 0.75rem; }
+
+  /* ---------- Respaldo ---------- */
+  .respaldo-intro { font-size: 0.88rem; color: var(--ink-soft); margin: 0 0 1.1rem; max-width: 46rem; }
+  .respaldo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.9rem; }
+  .respaldo-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: 1.1rem 1.15rem; box-shadow: 0 1px 2px var(--shadow);
+    display: flex; flex-direction: column; gap: 0.55rem;
+  }
+  .respaldo-card-icon {
+    width: 2.4rem; height: 2.4rem; border-radius: var(--radius-sm);
+    background: var(--surface-2); display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; flex: none;
+  }
+  .respaldo-card h3 { font-family: var(--font-display); font-size: 1rem; font-weight: 700; margin: 0; }
+  .respaldo-card p { font-size: 0.83rem; color: var(--ink-soft); line-height: 1.4; margin: 0; flex: 1; }
+  .respaldo-card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.15rem; }
+  .respaldo-card-actions .btn-secondary { font-size: 0.85rem; padding: 0.5rem 0.9rem; flex: 1; min-width: max-content; }
+  .respaldo-card.warn { border-color: var(--accent); }
+  .respaldo-card.warn .respaldo-card-icon { background: color-mix(in srgb, var(--accent) 16%, var(--surface-2)); }
 
   .sale-row {
     display: flex;
@@ -1006,6 +1035,7 @@
     <button class="tab-btn" id="tabPedidoBtn" role="tab" aria-selected="false">Pedido <span class="badge" id="pedidoBadge">0</span></button>
     <button class="tab-btn" id="tabVentasBtn" role="tab" aria-selected="false">Ventas</button>
     <button class="tab-btn" id="tabInventarioBtn" role="tab" aria-selected="false">Platos</button>
+    <button class="tab-btn" id="tabRespaldoBtn" role="tab" aria-selected="false">💾 Respaldo</button>
   </nav>
 
   <div class="mesa-bar" id="mesaBar" hidden>
@@ -1044,6 +1074,10 @@
 
   <section id="viewInventario" hidden>
     <div id="inventarioContent"></div>
+  </section>
+
+  <section id="viewRespaldo" hidden>
+    <div id="respaldoContent"></div>
   </section>
 </div>
 
@@ -1158,6 +1192,45 @@
   </div>
 </div>
 
+<div class="overlay" id="archiveOverlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="archiveTitle">
+    <h2 id="archiveTitle">Limpiar historial antiguo</h2>
+    <p class="wa-hint">Se descarga primero un respaldo de lo que se va a archivar. El total y la cantidad de pedidos archivados quedan guardados como una cifra acumulada — no se pierden, solo se resume. Las ventas de hoy, ayer y el mes actual nunca se archivan.</p>
+    <div class="field">
+      <label for="fArchiveDate">Archivar ventas anteriores a:</label>
+      <input type="date" id="fArchiveDate">
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" id="cancelArchiveBtn">Cancelar</button>
+      <button type="button" class="btn-primary" id="confirmArchiveBtn">Archivar y limpiar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="importOverlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+    <h2 id="importTitle">Restaurar respaldo</h2>
+    <p class="wa-hint" id="importSummary"></p>
+    <p class="wa-hint"><strong>Esto reemplaza todos los datos actuales de este teléfono</strong> (ventas, productos, mesas) por los del archivo. No se puede deshacer.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" id="cancelImportBtn">Cancelar</button>
+      <button type="button" class="btn-primary" id="confirmImportBtn">Restaurar</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="importFileInput" accept="application/json,.json" hidden>
+
+<div class="overlay" id="backupReminderOverlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="backupReminderTitle">
+    <h2 id="backupReminderTitle">Respaldo descargado ✓</h2>
+    <p class="wa-hint">El archivo quedó guardado en este teléfono. Si el teléfono se pierde, el respaldo se pierde con él — reenvíalo ahora por WhatsApp, correo o Google Drive para que quede seguro fuera del celular.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-primary" id="closeBackupReminderBtn">Entendido</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -1217,6 +1290,9 @@
           if (typeof parsed.receiptSeq !== "number") parsed.receiptSeq = 0;
           if (!parsed.order || typeof parsed.order !== "object") parsed.order = {};
           if (!Array.isArray(parsed.sales)) parsed.sales = [];
+          if (!parsed.archivedSummary || typeof parsed.archivedSummary !== "object") {
+            parsed.archivedSummary = { totalRevenue: 0, totalOrders: 0, archivedThrough: null };
+          }
           if (!Array.isArray(parsed.tables) || parsed.tables.length === 0) parsed.tables = defaultTables();
           parsed.tables.forEach(function (t) {
             if (!t.order || typeof t.order !== "object") t.order = {};
@@ -1231,7 +1307,12 @@
         }
       }
     } catch (e) {}
-    return { shopName: "Mi Restaurante", address: "", phone: BUSINESS_PHONE_DEFAULT, whatsapp: "", receiptSeq: 0, products: defaultProducts, order: {}, sales: [], tables: defaultTables(), activeMesaId: "m1" };
+    return {
+      shopName: "Mi Restaurante", address: "", phone: BUSINESS_PHONE_DEFAULT, whatsapp: "", receiptSeq: 0,
+      products: defaultProducts, order: {}, sales: [],
+      archivedSummary: { totalRevenue: 0, totalOrders: 0, archivedThrough: null },
+      tables: defaultTables(), activeMesaId: "m1"
+    };
   }
 
   function saveState() {
@@ -1320,11 +1401,13 @@
   var tabPedidoBtn = document.getElementById("tabPedidoBtn");
   var tabVentasBtn = document.getElementById("tabVentasBtn");
   var tabInventarioBtn = document.getElementById("tabInventarioBtn");
+  var tabRespaldoBtn = document.getElementById("tabRespaldoBtn");
   var viewCatalogo = document.getElementById("viewCatalogo");
   var viewMesas = document.getElementById("viewMesas");
   var viewPedido = document.getElementById("viewPedido");
   var viewVentas = document.getElementById("viewVentas");
   var viewInventario = document.getElementById("viewInventario");
+  var viewRespaldo = document.getElementById("viewRespaldo");
 
   function switchTab(tab) {
     activeTab = tab;
@@ -1333,11 +1416,13 @@
     var isPedido = tab === "pedido";
     var isVentas = tab === "ventas";
     var isInventario = tab === "inventario";
+    var isRespaldo = tab === "respaldo";
     viewCatalogo.hidden = !isCat;
     viewMesas.hidden = !isMesas;
     viewPedido.hidden = !isPedido;
     viewVentas.hidden = !isVentas;
     viewInventario.hidden = !isInventario;
+    viewRespaldo.hidden = !isRespaldo;
     if (!isMesas) mesaBar.hidden = true;
     tabCatalogoBtn.classList.toggle("active", isCat);
     tabCatalogoBtn.setAttribute("aria-selected", isCat);
@@ -1349,17 +1434,21 @@
     tabVentasBtn.setAttribute("aria-selected", isVentas);
     tabInventarioBtn.classList.toggle("active", isInventario);
     tabInventarioBtn.setAttribute("aria-selected", isInventario);
+    tabRespaldoBtn.classList.toggle("active", isRespaldo);
+    tabRespaldoBtn.setAttribute("aria-selected", isRespaldo);
     if (isCat) renderCatalogo();
     if (isMesas) renderMesas();
     if (isPedido) renderPedido();
     if (isVentas) renderVentas();
     if (isInventario) renderInventario();
+    if (isRespaldo) renderRespaldo();
   }
   tabCatalogoBtn.addEventListener("click", function () { switchTab("catalogo"); });
   tabMesasBtn.addEventListener("click", function () { mesaScreen = "list"; switchTab("mesas"); });
   tabPedidoBtn.addEventListener("click", function () { switchTab("pedido"); });
   tabInventarioBtn.addEventListener("click", function () { switchTab("inventario"); });
   tabVentasBtn.addEventListener("click", function () { switchTab("ventas"); });
+  tabRespaldoBtn.addEventListener("click", function () { switchTab("respaldo"); });
 
   /* ---------- Toast ---------- */
   function showToast(msg) {
@@ -1637,6 +1726,42 @@
       .sort(function (a, b) { return b.date - a.date; });
   }
 
+  function safeFileName(s) {
+    return (s || "restaurante").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  }
+
+  function downloadJSON(payload, baseFilename) {
+    var json = JSON.stringify(payload, null, 2);
+    var blob = new Blob([json], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = baseFilename + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function downloadCSV(content, baseFilename) {
+    var blob = new Blob([String.fromCharCode(0xFEFF) + content], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = baseFilename + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  var backupReminderOverlay = document.getElementById("backupReminderOverlay");
+  function remindBackup() {
+    backupReminderOverlay.hidden = false;
+  }
+  document.getElementById("closeBackupReminderBtn").addEventListener("click", function () { backupReminderOverlay.hidden = true; });
+  backupReminderOverlay.addEventListener("click", function (e) { if (e.target === backupReminderOverlay) backupReminderOverlay.hidden = true; });
+
   function exportData() {
     var payload = {
       exportedAt: new Date().toISOString(),
@@ -1644,21 +1769,152 @@
       sales: state.sales,
       products: state.products,
       tables: state.tables,
-      receiptSeq: state.receiptSeq
+      receiptSeq: state.receiptSeq,
+      archivedSummary: state.archivedSummary
     };
-    var json = JSON.stringify(payload, null, 2);
-    var blob = new Blob([json], { type: "application/json" });
-    var url = URL.createObjectURL(blob);
     var dateStr = new Date().toISOString().slice(0, 10);
-    var safeName = (state.shopName || "restaurante").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = "respaldo-" + safeName + "-" + dateStr + ".json";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    downloadJSON(payload, "respaldo-" + safeFileName(state.shopName) + "-" + dateStr);
     showToast("Datos exportados ✓");
+    remindBackup();
+  }
+
+  function csvField(v) {
+    var s = String(v == null ? "" : v);
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+
+  function exportDailySummaryCSV() {
+    if (state.sales.length === 0) {
+      showToast("Todavía no hay ventas para exportar");
+      return;
+    }
+    var groups = groupSalesByDay(state.sales).slice().sort(function (a, b) { return a.date - b.date; });
+    var rows = [["Fecha", "Total ventas", "Cantidad de pedidos", "Productos vendidos"].map(csvField).join(",")];
+    groups.forEach(function (group) {
+      var dayTotal = group.sales.reduce(function (sum, s) { return sum + s.total; }, 0);
+      var productTotals = {};
+      group.sales.forEach(function (s) {
+        s.items.forEach(function (it) {
+          productTotals[it.name] = (productTotals[it.name] || 0) + it.qty;
+        });
+      });
+      var productsStr = Object.keys(productTotals)
+        .sort(function (a, b) { return productTotals[b] - productTotals[a]; })
+        .map(function (name) { return name + " x" + productTotals[name]; })
+        .join("; ");
+      var fechaStr = group.date.toLocaleDateString("es-CO", { day: "2-digit", month: "2-digit", year: "numeric" });
+      rows.push([fechaStr, Math.round(dayTotal), group.sales.length, productsStr].map(csvField).join(","));
+    });
+    var dateStr = new Date().toISOString().slice(0, 10);
+    downloadCSV(rows.join("\r\n"), "resumen-ventas-" + safeFileName(state.shopName) + "-" + dateStr);
+    showToast("Resumen Excel exportado ✓");
+    remindBackup();
+  }
+
+  /* ---------- Importar / restaurar respaldo ---------- */
+  var importFileInput = document.getElementById("importFileInput");
+  var importOverlay = document.getElementById("importOverlay");
+  var importSummary = document.getElementById("importSummary");
+  var pendingImport = null;
+
+  importFileInput.addEventListener("change", function () {
+    var file = importFileInput.files && importFileInput.files[0];
+    importFileInput.value = "";
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var parsed;
+      try { parsed = JSON.parse(reader.result); } catch (e) {
+        showToast("Ese archivo no es un respaldo válido");
+        return;
+      }
+      if (!parsed || !Array.isArray(parsed.sales)) {
+        showToast("Ese archivo no es un respaldo válido");
+        return;
+      }
+      pendingImport = parsed;
+      var archivedOrders = (parsed.archivedSummary && parsed.archivedSummary.totalOrders) || 0;
+      var whenStr = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleDateString("es-CO", { day: "2-digit", month: "2-digit", year: "numeric" }) : "fecha desconocida";
+      importSummary.textContent = "Archivo del " + whenStr + " — " + parsed.sales.length + (parsed.sales.length === 1 ? " venta" : " ventas") +
+        (archivedOrders > 0 ? " + " + archivedOrders + " archivadas" : "") +
+        (Array.isArray(parsed.products) ? " · " + parsed.products.length + " platos" : "") +
+        (Array.isArray(parsed.tables) ? " · " + parsed.tables.length + " mesas" : "") + ".";
+      importOverlay.hidden = false;
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById("cancelImportBtn").addEventListener("click", function () {
+    pendingImport = null;
+    importOverlay.hidden = true;
+  });
+  importOverlay.addEventListener("click", function (e) { if (e.target === importOverlay) { pendingImport = null; importOverlay.hidden = true; } });
+
+  document.getElementById("confirmImportBtn").addEventListener("click", function () {
+    if (!pendingImport) return;
+    var parsed = pendingImport;
+    state.sales = parsed.sales;
+    state.archivedSummary = (parsed.archivedSummary && typeof parsed.archivedSummary === "object")
+      ? parsed.archivedSummary
+      : { totalRevenue: 0, totalOrders: 0, archivedThrough: null };
+    if (Array.isArray(parsed.products) && parsed.products.length > 0) state.products = parsed.products;
+    if (Array.isArray(parsed.tables) && parsed.tables.length > 0) state.tables = parsed.tables;
+    if (typeof parsed.receiptSeq === "number") state.receiptSeq = parsed.receiptSeq;
+    pendingImport = null;
+    importOverlay.hidden = true;
+    saveState();
+    location.reload();
+  });
+
+  /* ---------- Archivar ventas antiguas ---------- */
+  var archiveOverlay = document.getElementById("archiveOverlay");
+  var fArchiveDate = document.getElementById("fArchiveDate");
+
+  function openArchiveModal() {
+    var now = new Date();
+    var firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    var maxStr = firstOfMonth.toISOString().slice(0, 10);
+    fArchiveDate.max = maxStr;
+    fArchiveDate.value = maxStr;
+    archiveOverlay.hidden = false;
+  }
+  function closeArchiveModal() { archiveOverlay.hidden = true; }
+
+  document.getElementById("cancelArchiveBtn").addEventListener("click", closeArchiveModal);
+  archiveOverlay.addEventListener("click", function (e) { if (e.target === archiveOverlay) closeArchiveModal(); });
+
+  document.getElementById("confirmArchiveBtn").addEventListener("click", function () {
+    if (!fArchiveDate.value) { showToast("Elige una fecha"); return; }
+    var cutoff = new Date(fArchiveDate.value + "T00:00:00");
+    closeArchiveModal();
+    archiveOldSales(cutoff);
+  });
+
+  function archiveOldSales(cutoff) {
+    var toArchive = state.sales.filter(function (s) { return new Date(s.dateISO) < cutoff; });
+    if (toArchive.length === 0) {
+      showToast("No hay ventas anteriores a esa fecha para archivar");
+      return;
+    }
+    var toKeep = state.sales.filter(function (s) { return new Date(s.dateISO) >= cutoff; });
+
+    downloadJSON({
+      exportedAt: new Date().toISOString(),
+      type: "archivo-ventas",
+      shopName: state.shopName,
+      archivedThrough: cutoff.toISOString(),
+      sales: toArchive
+    }, "archivo-ventas-" + safeFileName(state.shopName) + "-hasta-" + cutoff.toISOString().slice(0, 10));
+
+    var archivedRevenue = toArchive.reduce(function (sum, s) { return sum + s.total; }, 0);
+    state.archivedSummary.totalRevenue += archivedRevenue;
+    state.archivedSummary.totalOrders += toArchive.length;
+    state.archivedSummary.archivedThrough = cutoff.toISOString();
+    state.sales = toKeep;
+    saveState();
+    renderVentas();
+    showToast(toArchive.length + " ventas archivadas y respaldadas ✓");
+    remindBackup();
   }
 
   function renderVentas() {
@@ -1692,9 +1948,14 @@
           '<div class="stat-sub">' + monthSales.length + (monthSales.length === 1 ? " pedido" : " pedidos") + '</div>' +
         '</div>' +
       '</div>' +
+      (state.archivedSummary.totalOrders > 0 ?
+        '<div class="archived-summary">' +
+          '<span>📦 Histórico archivado: <strong>' + money(state.archivedSummary.totalRevenue) + '</strong> · ' + state.archivedSummary.totalOrders + (state.archivedSummary.totalOrders === 1 ? " pedido" : " pedidos") + '</span>' +
+          '<span class="archived-summary-date">hasta ' + new Date(state.archivedSummary.archivedThrough).toLocaleDateString("es-CO", { day: "2-digit", month: "2-digit", year: "numeric" }) + '</span>' +
+        '</div>'
+      : "") +
       '<div class="sales-section-header">' +
         '<h2 class="sales-section-title">Historial de ventas</h2>' +
-        '<button type="button" class="btn-secondary export-data-btn" id="exportDataBtn">⬇ Exportar datos</button>' +
       '</div>';
 
     var dayGroups = groupSalesByDay(state.sales);
@@ -1702,13 +1963,11 @@
     if (dayGroups.length === 0) {
       html += '<div class="empty-state"><div class="glyph">📋</div><div>Todavía no has confirmado ningún pedido.</div></div>';
       ventasContent.innerHTML = html;
-      document.getElementById("exportDataBtn").addEventListener("click", exportData);
       return;
     }
 
     html += '<div id="historyList"></div>';
     ventasContent.innerHTML = html;
-    document.getElementById("exportDataBtn").addEventListener("click", exportData);
 
     var historyList = document.getElementById("historyList");
     dayGroups.forEach(function (group, idx) {
@@ -1742,6 +2001,53 @@
 
       historyList.appendChild(groupEl);
     });
+  }
+
+  /* ---------- Render: Respaldo ---------- */
+  var respaldoContent = document.getElementById("respaldoContent");
+
+  function renderRespaldo() {
+    var html =
+      '<p class="respaldo-intro">Copias de seguridad de tu información. Guarda el respaldo fuera del teléfono (correo, Drive, WhatsApp) para no perderlo si el celular se pierde o se daña.</p>' +
+      '<div class="respaldo-grid">' +
+        '<div class="respaldo-card">' +
+          '<div class="respaldo-card-icon">⬇</div>' +
+          '<h3>Exportar datos</h3>' +
+          '<p>Descarga un respaldo completo (ventas, platos, mesas) en un archivo. Úsalo para restaurar todo en otro teléfono.</p>' +
+          '<div class="respaldo-card-actions">' +
+            '<button type="button" class="btn-secondary" id="exportDataBtn">Exportar datos</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="respaldo-card">' +
+          '<div class="respaldo-card-icon">📊</div>' +
+          '<h3>Resumen en Excel</h3>' +
+          '<p>Descarga un archivo .csv con el total de ventas, cantidad de pedidos y productos vendidos por día. Se abre en Excel o Google Sheets.</p>' +
+          '<div class="respaldo-card-actions">' +
+            '<button type="button" class="btn-secondary" id="exportCsvBtn">Exportar resumen Excel</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="respaldo-card">' +
+          '<div class="respaldo-card-icon">⬆</div>' +
+          '<h3>Importar / restaurar</h3>' +
+          '<p>Recupera un respaldo exportado antes. Reemplaza los datos de este teléfono por los del archivo — útil si perdiste el celular.</p>' +
+          '<div class="respaldo-card-actions">' +
+            '<button type="button" class="btn-secondary" id="importDataBtn">Importar datos</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="respaldo-card warn">' +
+          '<div class="respaldo-card-icon">📦</div>' +
+          '<h3>Limpiar historial antiguo</h3>' +
+          '<p>Descarga y archiva las ventas más viejas para aligerar la app. Quedan resumidas en un total acumulado, no se pierden.</p>' +
+          '<div class="respaldo-card-actions">' +
+            '<button type="button" class="btn-secondary" id="openArchiveBtn">Limpiar historial antiguo</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    respaldoContent.innerHTML = html;
+    document.getElementById("exportDataBtn").addEventListener("click", exportData);
+    document.getElementById("exportCsvBtn").addEventListener("click", exportDailySummaryCSV);
+    document.getElementById("importDataBtn").addEventListener("click", function () { importFileInput.click(); });
+    document.getElementById("openArchiveBtn").addEventListener("click", openArchiveModal);
   }
 
   /* ---------- Render: Platos (admin) ---------- */
